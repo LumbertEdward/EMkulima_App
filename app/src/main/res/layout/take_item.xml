@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:id="@+id/cardTake"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/white">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imgTake"
+            android:layout_width="150dp"
+            android:layout_height="130dp"
+            android:src="@drawable/avokado"
+            android:scaleType="fitXY"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+            <TextView
+                android:id="@+id/nameTake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fresh Orange"
+                android:textColor="@color/black"
+                android:fontFamily="@font/nunitobold"
+                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/timeTake"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunitobold"
+                    android:text="10 mins"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray" />
+                <TextView
+                    android:id="@+id/calTake"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="268kcal"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:fontFamily="@font/nunitobold"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

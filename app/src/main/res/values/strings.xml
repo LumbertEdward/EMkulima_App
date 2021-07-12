@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">EMkulima App</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="HOME">HOME</string>
+    <string name="CART">CART</string>
+    <string name="PRODUCTS">PRODUCTS</string>
+    <string name="FAVOURITES">FAVOURITES</string>
+    <string name="SEARCH">SEARCH</string>
+    <string name="vegetables">Order fresh vegetables from the farm and experience the best flavour</string>
+</resources>
