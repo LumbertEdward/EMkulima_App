@@ -8,10 +8,9 @@ import android.content.res.Resources
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.util.Log
+import android.view.View
+import android.widget.*
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -20,6 +19,12 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.emkulimaapp.MainActivity
 import com.example.emkulimaapp.R
+import com.example.emkulimaapp.RetrofitClasses.GoogleLoginRetrofit
+import com.example.emkulimaapp.RetrofitClasses.LoginRetrofit
+import com.example.emkulimaapp.interfaces.GoogleLoginInterface
+import com.example.emkulimaapp.interfaces.LoginInterface
+import com.example.emkulimaapp.models.AllCustomer
+import com.example.emkulimaapp.models.Customer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -28,16 +33,29 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Login : AppCompatActivity() {
     @BindView(R.id.newAccount)
     lateinit var create: TextView
     @BindView(R.id.google)
-    lateinit var googleLogin: ImageView
+    lateinit var googleLogin: RelativeLayout
+    @BindView(R.id.login)
+    lateinit var login: RelativeLayout
+    @BindView(R.id.emailLogin)
+    lateinit var email: EditText
+    @BindView(R.id.passwordLogin)
+    lateinit var password: EditText
+    @BindView(R.id.progressLogin)
+    lateinit var progressBar: ProgressBar
 
     lateinit var googleSignInClient: GoogleSignInClient
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var googleLoginInterface: GoogleLoginInterface
+    private lateinit var loginInterface: LoginInterface
 
     var getRes = registerForActivityResult(StartActivityForResult(), ActivityResultCallback {
         if (it.resultCode == Activity.RESULT_OK){
@@ -54,12 +72,21 @@ class Login : AppCompatActivity() {
         sharedPreferences = this.getSharedPreferences("USER", MODE_PRIVATE)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            window.statusBarColor = resources.getColor(R.color.white, Resources.getSystem().newTheme())
             window.navigationBarColor = resources.getColor(R.color.green, Resources.getSystem().newTheme())
         }
 
+        progressBar.visibility = View.GONE
         this.create.setOnClickListener{
             startActivity(Intent(this, SignUp::class.java))
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        }
+
+        this.login.setOnClickListener {
+            var email = this.email.text.toString().trim()
+            var password = this.password.text.toString().trim()
+            confirmDetails(email, password)
+            progressBar.visibility = View.VISIBLE
         }
 
         this.googleLogin.setOnClickListener {
@@ -67,6 +94,43 @@ class Login : AppCompatActivity() {
         }
 
         setOptions()
+    }
+
+    private fun confirmDetails(email: String, password: String) {
+        loginInterface = LoginRetrofit.getRetrofit().create(LoginInterface::class.java)
+        val call: Call<AllCustomer> = loginInterface.loginUser(email, password)
+        call.enqueue(object : Callback<AllCustomer>{
+            override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
+                if (response.isSuccessful){
+                    progressBar.visibility = View.GONE
+                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                    editor.putBoolean("LOGGEDIN", true)
+                    editor.apply()
+                    saveUserData(response.body()!!.data)
+                    startActivity(Intent(this@Login, MainActivity::class.java))
+                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    finish()
+                }
+            }
+
+            override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
+                Toast.makeText(this@Login, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.i("LOGIN", t.message.toString())
+                progressBar.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun saveUserData(data: ArrayList<Customer>) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("EMAIL", data[0].email)
+        editor.putString("FIRSTNAME", data[0].firstName)
+        editor.putString("USERID", data[0].userId.toString())
+        editor.putString("LOCATION", data[0].location)
+        editor.putString("PHONENUMBER", data[0].phoneNumber)
+        editor.apply()
+
     }
 
     private fun setOptions(){
@@ -93,14 +157,45 @@ class Login : AppCompatActivity() {
             val middleName: String = googleSignInAccount.givenName.toString()
 
             if (googleSignInAccount.email != null){
-                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                editor.putBoolean("LOGGEDIN", true)
-                editor.apply()
-                startActivity(Intent(this, MainActivity::class.java))
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                checkUserDetails(email, firstName)
             }
         }catch (e: ApiException){
 
+        }
+    }
+
+    private fun checkUserDetails(email: String, firstName: String) {
+        googleLoginInterface = GoogleLoginRetrofit.getRetrofit().create(GoogleLoginInterface::class.java)
+        val call: Call<AllCustomer> = googleLoginInterface.getUser(email)
+        call.enqueue(object : Callback<AllCustomer>{
+            override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
+                if (response.isSuccessful){
+                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                    editor.putBoolean("LOGGEDIN", true)
+                    editor.apply()
+                    setUser(response.body()!!.data)
+                    startActivity(Intent(this@Login, MainActivity::class.java))
+                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    finish()
+                }
+            }
+
+            override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
+                Toast.makeText(this@Login, "User does not exist", Toast.LENGTH_LONG).show()
+            }
+
+        })
+
+    }
+
+    private fun setUser(data: ArrayList<Customer>) {
+        if (data.size > 0){
+            val sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", MODE_PRIVATE)
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString("EMAIL", data[0].email.toString())
+            editor.putString("FIRSTNAME", data[0].firstName.toString())
+            editor.putString("USERID", data[0].userId.toString())
+            editor.apply()
         }
     }
 
@@ -110,6 +205,7 @@ class Login : AppCompatActivity() {
         if (status){
             startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+            finish()
         }
     }
 }

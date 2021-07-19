@@ -1,5 +1,6 @@
 package com.example.emkulimaapp
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
@@ -7,13 +8,12 @@ import android.opengl.Visibility
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-import android.widget.Button
-import android.widget.RelativeLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -21,12 +21,19 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.emkulimaapp.authentication.Login
 import com.example.emkulimaapp.fragments.*
 import com.example.emkulimaapp.interfaces.GeneralInterface
+import com.example.emkulimaapp.models.Cart
 import com.example.emkulimaapp.models.FragmentClass
+import com.example.emkulimaapp.models.Product
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -36,40 +43,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(), GeneralInterface {
-    @BindView(R.id.navigation)
-    lateinit var nav: NavigationView
     @BindView(R.id.bottom)
     lateinit var bot: BottomNavigationView
-    @BindView(R.id.relTool)
-    lateinit var tool: Toolbar
-    @BindView(R.id.drawer)
-    lateinit var drawer: DrawerLayout
-    private lateinit var coordinatorLayout: CoordinatorLayout
-    private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var sharedPreferences: SharedPreferences
 
-    //fragments
-    private var homeFragment: HomeFragment? = null
-    private var favouritesFragment: FavouritesFragment? = null
-    private var productsFragment: ProductsFragment? = null
-    private var searchFragment: SearchFragment? = null
-    private var cartFragment: CartFragment? = null
-
-    var tags: ArrayList<String> = ArrayList()
-    var fragments: ArrayList<FragmentClass> = ArrayList()
-    var mCount: Int = 0
+    private lateinit var navController: NavController
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
+        navController = findNavController(R.id.navHost)
 
         sharedPreferences = this.getSharedPreferences("USER", MODE_PRIVATE)
-
-        coordinatorLayout = findViewById(R.id.coordinator)
-        coordinatorLayout.visibility = View.VISIBLE
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             window.statusBarColor = resources.getColor(R.color.white, Resources.getSystem().newTheme())
@@ -77,153 +65,35 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         }
 
         initFragment()
-        setNavigation()
         setBottomView()
-        setDrawer()
     }
 
     private fun initFragment() {
-        if (homeFragment == null){
-            homeFragment = HomeFragment()
-            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.frame, homeFragment!!, getString(R.string.HOME))
-            fragmentTransaction.commit()
-            tags.add(getString(R.string.HOME))
-            fragments.add(FragmentClass(getString(R.string.HOME), homeFragment))
-        }
-        else{
-            tags.remove(getString(R.string.HOME))
-            tags.add(getString(R.string.HOME))
-        }
-        setVisibility(getString(R.string.HOME))
-    }
-
-    private fun setDrawer() {
-        setSupportActionBar(tool)
-        actionBarDrawerToggle = ActionBarDrawerToggle(
-            this, drawer, tool, R.string.open, R.string.close
-        )
-        drawer.addDrawerListener(actionBarDrawerToggle)
-        actionBarDrawerToggle.syncState()
-
+        navController.navigate(R.id.homeFragment)
     }
 
     private fun setBottomView() {
+        bot.setupWithNavController(navController)
         this.bot.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.home -> {
-                    if (homeFragment == null){
-                        homeFragment = HomeFragment()
-                        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.add(R.id.frame, homeFragment!!, getString(R.string.HOME))
-                        fragmentTransaction.commit()
-                        tags.add(getString(R.string.HOME))
-                        fragments.add(FragmentClass(getString(R.string.HOME), homeFragment))
-                    }
-                    else{
-                        tags.remove(getString(R.string.HOME))
-                        tags.add(getString(R.string.HOME))
-                    }
-                    setVisibility(getString(R.string.HOME))
+                    navController.navigate(R.id.homeFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.cart -> {
-                    if (cartFragment == null){
-                        cartFragment = CartFragment()
-                        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.add(R.id.frame, cartFragment!!, getString(R.string.CART))
-                        fragmentTransaction.commit()
-                        tags.add(getString(R.string.CART))
-                        fragments.add(FragmentClass(getString(R.string.CART), cartFragment))
-                    }
-                    else{
-                        tags.remove(getString(R.string.CART))
-                        tags.add(getString(R.string.CART))
-                    }
-                    setVisibility(getString(R.string.CART))
+                    navController.navigate(R.id.cartFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.favourites -> {
-                    if (favouritesFragment == null){
-                        favouritesFragment = FavouritesFragment()
-                        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.add(R.id.frame, favouritesFragment!!, getString(R.string.FAVOURITES))
-                        fragmentTransaction.commit()
-                        tags.add(getString(R.string.FAVOURITES))
-                        fragments.add(FragmentClass(getString(R.string.FAVOURITES), favouritesFragment))
-                    }
-                    else{
-                        tags.remove(getString(R.string.FAVOURITES))
-                        tags.add(getString(R.string.FAVOURITES))
-                    }
-                    setVisibility(getString(R.string.FAVOURITES))
+                    navController.navigate(R.id.favouritesFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.profile -> {
-                    if (homeFragment == null){
-                        homeFragment = HomeFragment()
-                        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.add(R.id.frame, homeFragment!!, getString(R.string.HOME))
-                        fragmentTransaction.commit()
-                        tags.add(getString(R.string.HOME))
-                        fragments.add(FragmentClass(getString(R.string.HOME), homeFragment))
-                    }
-                    else{
-                        tags.remove(getString(R.string.HOME))
-                        tags.add(getString(R.string.HOME))
-                    }
-                    setVisibility(getString(R.string.HOME))
+                    navController.navigate(R.id.profileFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
                 else -> {
                     return@setOnNavigationItemSelectedListener false
-                }
-            }
-        }
-    }
-
-    private fun setNavigation() {
-        this.nav.setNavigationItemSelectedListener {
-            drawer.closeDrawers()
-            when(it.itemId){
-                R.id.navHome -> {
-                    if (homeFragment == null){
-                        homeFragment = HomeFragment()
-                        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.add(R.id.frame, homeFragment!!, getString(R.string.HOME))
-                        fragmentTransaction.commit()
-                        tags.add(getString(R.string.HOME))
-                        fragments.add(FragmentClass(getString(R.string.HOME), homeFragment))
-                    }
-                    else{
-                        tags.remove(getString(R.string.HOME))
-                        tags.add(getString(R.string.HOME))
-                    }
-                    setVisibility(getString(R.string.HOME))
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.navCart -> {
-                    if (cartFragment == null){
-                        cartFragment = CartFragment()
-                        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        fragmentTransaction.add(R.id.frame, cartFragment!!, getString(R.string.CART))
-                        fragmentTransaction.commit()
-                        tags.add(getString(R.string.CART))
-                        fragments.add(FragmentClass(getString(R.string.CART), cartFragment))
-                    }
-                    else{
-                        tags.remove(getString(R.string.CART))
-                        tags.add(getString(R.string.CART))
-                    }
-                    setVisibility(getString(R.string.CART))
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.navProfile -> {
-                    logOut()
-                    return@setNavigationItemSelectedListener true
-                }
-                else -> {
-                    return@setNavigationItemSelectedListener false
                 }
             }
         }
@@ -239,77 +109,50 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
             editor.putBoolean("LOGGEDIN", false)
             editor.apply()
+
+            val sharedPreferencesUserDetails: SharedPreferences = getSharedPreferences("USERDETAILS", MODE_PRIVATE)
+            val editorUser: SharedPreferences.Editor = sharedPreferencesUserDetails.edit()
+            editorUser.clear()
             startActivity(Intent(this, Login::class.java))
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         }
     }
 
-    private fun setVisibility(tag: String){
-
-        if (tag == getString(R.string.HOME)){
-            coordinatorLayout.visibility = View.VISIBLE
-        }
-        if (tag == getString(R.string.CART)){
-            coordinatorLayout.visibility = View.GONE
-        }
-        if (tag == getString(R.string.SEARCH)){
-            coordinatorLayout.visibility = View.GONE
-        }
-        if (tag == getString(R.string.PRODUCTS)){
-            coordinatorLayout.visibility = View.GONE
-        }
-
-
-        for (i in tags.indices){
-            if (tag == fragments[i].name){
-                val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                fragmentTransaction.show(fragments[i].fragment!!)
-                fragmentTransaction.commit()
-            }
-            else{
-                val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-                fragmentTransaction.hide(fragments[i].fragment!!)
-                fragmentTransaction.commit()
-            }
-        }
+    private fun showBottom(){
+        this.bot.visibility = View.VISIBLE
     }
 
-    override fun onBackPressed() {
-        val total = tags.size
-        if (total > 1){
-            val top: String = tags[total - 1]
-            val bottom: String = tags[total - 2]
-            setVisibility(bottom)
-            tags.remove(top)
-            mCount = 1
-        }
-        else if (total == 1){
-            val top = tags[total - 1]
-            if (top == getString(R.string.HOME)){
-                Toast.makeText(this, "End", Toast.LENGTH_LONG).show()
-                mCount++
-            }
-            else{
-                mCount++
-            }
-        }
-        if (mCount >= 2){
-            super.onBackPressed()
-        }
+    private fun hideBottom(){
+        this.bot.visibility = View.GONE
     }
 
     override fun getAllProducts() {
-        if (productsFragment != null){
-            supportFragmentManager.beginTransaction().remove(productsFragment!!).commitAllowingStateLoss()
-        }
-        else{
-            productsFragment = ProductsFragment()
-            var fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.frame, productsFragment!!, getString(R.string.PRODUCTS)).commit()
-            fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-            tags.add(getString(R.string.PRODUCTS))
-            fragments.add(FragmentClass(getString(R.string.PRODUCTS), productsFragment))
-            setVisibility(getString(R.string.PRODUCTS))
-        }
+        navController.navigate(R.id.action_homeFragment_to_productsFragment)
+    }
+
+    override fun passDetails(product: Product) {
+        var bundle: Bundle = Bundle()
+        bundle.putParcelable("PRODUCT", product)
+
+        navController.navigate(R.id.productDetailsFragment, bundle)
+    }
+
+    override fun getTypeSelected(type: String) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("PRODUCTTYPE", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("TYPE", type)
+        editor.apply()
+
+        navController.navigate(R.id.action_homeFragment_to_productTypefragment)
+    }
+
+    override fun goToCheckout(lst: ArrayList<Cart>) {
+        var bundle: Bundle = Bundle()
+        bundle.putParcelableArrayList("CART", lst)
+        navController.navigate(R.id.action_cartFragment_to_checkOutFragment, bundle)
+    }
+
+    override fun goToOrders() {
+        navController.navigate(R.id.action_checkOutFragment_to_ordersFragment)
     }
 }

@@ -11,348 +11,492 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarSize="0dp"
+            android:orientation="vertical"
             >
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                >
-                <HorizontalScrollView
+                android:background="@color/white"
+                android:layout_height="?attr/actionBarSize">
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:text="Mkulima ChapChap"
+                    android:textColor="@color/green"
+                    android:textSize="16sp"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/nunitobold"
+                    android:layout_marginLeft="12dp"
+                    />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_baseline_notifications_none_24"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    app:tint="@color/green"
+                    android:layout_marginRight="15dp"
+                    android:layout_alignParentRight="true" />
+            </RelativeLayout>
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeHome"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <ScrollView
+                    android:id="@+id/scrollHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:scrollbarSize="0dp"
                     >
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="23dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
                         >
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardVegetables"
+                        <HorizontalScrollView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@android:color/holo_orange_dark"
-                            android:layout_marginLeft="5dp"
-                            app:cardCornerRadius="5dp"
+                            android:background="@color/white"
+                            android:scrollbarSize="0dp"
                             >
-                            <RelativeLayout
-                                android:layout_width="170dp"
-                                android:layout_height="70dp"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="16dp"
                                 >
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/cardVegetables"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardBackgroundColor="@android:color/holo_orange_dark"
+                                    android:layout_marginLeft="5dp"
+                                    app:cardCornerRadius="5dp"
+                                    >
+                                    <RelativeLayout
+                                        android:layout_width="170dp"
+                                        android:layout_height="50dp"
+                                        >
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:padding="10dp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_centerHorizontal="true"
+                                            android:orientation="horizontal"
+                                            >
+                                            <androidx.cardview.widget.CardView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                app:cardCornerRadius="50dp"
+                                                android:layout_gravity="center_vertical"
+                                                >
+                                                <ImageView
+                                                    android:layout_width="40dp"
+                                                    android:layout_height="40dp"
+                                                    android:src="@drawable/veg"
+                                                    android:scaleType="fitXY"
+                                                    />
+
+                                            </androidx.cardview.widget.CardView>
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="Vegetables"
+                                                android:textColor="@color/white"
+                                                android:fontFamily="@font/nunitobold"
+                                                android:layout_gravity="center_vertical"
+                                                android:layout_marginLeft="10dp"
+                                                android:textSize="14sp"
+                                                />
+                                        </LinearLayout>
+
+                                    </RelativeLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/cardFruits"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardBackgroundColor="@color/blue"
+                                    android:layout_marginLeft="8dp"
+                                    app:cardCornerRadius="5dp"
+                                    >
+                                    <RelativeLayout
+                                        android:layout_width="160dp"
+                                        android:layout_height="50dp"
+                                        >
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:padding="10dp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_centerHorizontal="true"
+                                            android:orientation="horizontal"
+                                            >
+                                            <androidx.cardview.widget.CardView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                app:cardCornerRadius="50dp"
+                                                android:layout_gravity="center_vertical"
+                                                >
+                                                <ImageView
+                                                    android:layout_width="40dp"
+                                                    android:layout_height="40dp"
+                                                    android:src="@drawable/avokado"
+                                                    android:scaleType="fitXY"
+                                                    />
+
+                                            </androidx.cardview.widget.CardView>
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="Fruits"
+                                                android:textColor="@color/white"
+                                                android:fontFamily="@font/nunitobold"
+                                                android:layout_gravity="center_vertical"
+                                                android:layout_marginLeft="10dp"
+                                                android:textSize="14sp"
+                                                />
+                                        </LinearLayout>
+
+                                    </RelativeLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/cardDairy"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardBackgroundColor="@color/purple"
+                                    android:layout_marginLeft="8dp"
+                                    app:cardCornerRadius="5dp"
+                                    >
+                                    <RelativeLayout
+                                        android:layout_width="160dp"
+                                        android:layout_height="50dp"
+                                        >
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:padding="10dp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_centerHorizontal="true"
+                                            android:orientation="horizontal"
+                                            >
+                                            <androidx.cardview.widget.CardView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                app:cardCornerRadius="50dp"
+                                                android:layout_gravity="center_vertical"
+                                                >
+                                                <ImageView
+                                                    android:layout_width="40dp"
+                                                    android:layout_height="40dp"
+                                                    android:src="@drawable/veg"
+                                                    android:scaleType="fitXY"
+                                                    />
+
+                                            </androidx.cardview.widget.CardView>
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="Dairy"
+                                                android:textColor="@color/white"
+                                                android:fontFamily="@font/nunitobold"
+                                                android:layout_gravity="center_vertical"
+                                                android:layout_marginLeft="10dp"
+                                                android:textSize="14sp"
+                                                />
+                                        </LinearLayout>
+
+                                    </RelativeLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/cardMeat"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:cardBackgroundColor="@color/green"
+                                    android:layout_marginLeft="8dp"
+                                    app:cardCornerRadius="5dp"
+                                    >
+                                    <RelativeLayout
+                                        android:layout_width="160dp"
+                                        android:layout_height="50dp"
+                                        >
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:padding="10dp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_centerHorizontal="true"
+                                            android:orientation="horizontal"
+                                            >
+                                            <androidx.cardview.widget.CardView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                app:cardCornerRadius="50dp"
+                                                android:layout_gravity="center_vertical"
+                                                >
+                                                <ImageView
+                                                    android:layout_width="40dp"
+                                                    android:layout_height="40dp"
+                                                    android:src="@drawable/veg"
+                                                    android:scaleType="fitXY"
+                                                    />
+
+                                            </androidx.cardview.widget.CardView>
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="Meat"
+                                                android:textColor="@color/white"
+                                                android:fontFamily="@font/nunitobold"
+                                                android:layout_gravity="center_vertical"
+                                                android:layout_marginLeft="10dp"
+                                                android:textSize="14sp"
+                                                />
+                                        </LinearLayout>
+
+                                    </RelativeLayout>
+                                </androidx.cardview.widget.CardView>
+
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@color/back_home"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            >
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Take Your Pick"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:textSize="16sp"
+                                    />
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:padding="10dp"
-                                    android:layout_centerVertical="true"
-                                    android:layout_centerHorizontal="true"
                                     android:orientation="horizontal"
+                                    android:layout_alignParentRight="true"
                                     >
-                                    <androidx.cardview.widget.CardView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        app:cardCornerRadius="50dp"
-                                        android:layout_gravity="center_vertical"
-                                        >
-                                        <ImageView
-                                            android:layout_width="40dp"
-                                            android:layout_height="40dp"
-                                            android:src="@drawable/veg"
-                                            android:scaleType="fitXY"
-                                            />
 
-                                    </androidx.cardview.widget.CardView>
                                     <TextView
+                                        android:id="@+id/viewTake"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Vegetables"
-                                        android:textColor="@color/white"
                                         android:fontFamily="@font/nunitobold"
+                                        android:text="View All"
+                                        android:textColor="@color/green" />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                                        app:tint="@color/green"
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginLeft="10dp"
-                                        android:textSize="14sp"
                                         />
+
                                 </LinearLayout>
-
                             </RelativeLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardFruits"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@color/blue"
-                            android:layout_marginLeft="8dp"
-                            app:cardCornerRadius="5dp"
-                            >
                             <RelativeLayout
-                                android:layout_width="160dp"
-                                android:layout_height="70dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
                                 >
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recyclerTake"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Fresh Vegetables"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:textSize="16sp"
+                                    />
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:padding="10dp"
-                                    android:layout_centerVertical="true"
-                                    android:layout_centerHorizontal="true"
                                     android:orientation="horizontal"
+                                    android:layout_alignParentRight="true"
                                     >
-                                    <androidx.cardview.widget.CardView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        app:cardCornerRadius="50dp"
-                                        android:layout_gravity="center_vertical"
-                                        >
-                                        <ImageView
-                                            android:layout_width="40dp"
-                                            android:layout_height="40dp"
-                                            android:src="@drawable/avokado"
-                                            android:scaleType="fitXY"
-                                            />
-
-                                    </androidx.cardview.widget.CardView>
                                     <TextView
+                                        android:id="@+id/viewVegetables"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Fruits"
-                                        android:textColor="@color/white"
+                                        android:text="View All"
+                                        android:textColor="@color/green"
                                         android:fontFamily="@font/nunitobold"
+                                        />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                                        app:tint="@color/green"
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginLeft="10dp"
-                                        android:textSize="14sp"
                                         />
+
                                 </LinearLayout>
-
                             </RelativeLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardDairy"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@color/purple"
-                            android:layout_marginLeft="8dp"
-                            app:cardCornerRadius="5dp"
-                            >
                             <RelativeLayout
-                                android:layout_width="160dp"
-                                android:layout_height="70dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
                                 >
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recyclerVegetables"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Fresh Fruits"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:textSize="16sp"
+                                    />
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:padding="10dp"
-                                    android:layout_centerVertical="true"
-                                    android:layout_centerHorizontal="true"
                                     android:orientation="horizontal"
+                                    android:layout_alignParentRight="true"
                                     >
-                                    <androidx.cardview.widget.CardView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        app:cardCornerRadius="50dp"
-                                        android:layout_gravity="center_vertical"
-                                        >
-                                        <ImageView
-                                            android:layout_width="40dp"
-                                            android:layout_height="40dp"
-                                            android:src="@drawable/veg"
-                                            android:scaleType="fitXY"
-                                            />
-
-                                    </androidx.cardview.widget.CardView>
                                     <TextView
+                                        android:id="@+id/viewFruits"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Dairy"
-                                        android:textColor="@color/white"
+                                        android:text="View All"
+                                        android:textColor="@color/green"
                                         android:fontFamily="@font/nunitobold"
+                                        />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                                        app:tint="@color/green"
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginLeft="10dp"
-                                        android:textSize="14sp"
                                         />
+
                                 </LinearLayout>
-
                             </RelativeLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardMeat"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardBackgroundColor="@color/green"
-                            android:layout_marginLeft="8dp"
-                            app:cardCornerRadius="5dp"
-                            >
                             <RelativeLayout
-                                android:layout_width="160dp"
-                                android:layout_height="70dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
                                 >
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recyclerFruits"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:listitem="@layout/category_item"
+                                    />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Recommended"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:textSize="16sp"
+                                    />
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:padding="10dp"
-                                    android:layout_centerVertical="true"
-                                    android:layout_centerHorizontal="true"
                                     android:orientation="horizontal"
+                                    android:layout_alignParentRight="true"
                                     >
-                                    <androidx.cardview.widget.CardView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        app:cardCornerRadius="50dp"
-                                        android:layout_gravity="center_vertical"
-                                        >
-                                        <ImageView
-                                            android:layout_width="40dp"
-                                            android:layout_height="40dp"
-                                            android:src="@drawable/veg"
-                                            android:scaleType="fitXY"
-                                            />
-
-                                    </androidx.cardview.widget.CardView>
                                     <TextView
+                                        android:id="@+id/viewRecommend"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Meat"
-                                        android:textColor="@color/white"
+                                        android:text="View All"
+                                        android:textColor="@color/green"
                                         android:fontFamily="@font/nunitobold"
+                                        />
+                                    <ImageView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                                        app:tint="@color/green"
                                         android:layout_gravity="center_vertical"
                                         android:layout_marginLeft="10dp"
-                                        android:textSize="14sp"
                                         />
-                                </LinearLayout>
 
+                                </LinearLayout>
                             </RelativeLayout>
-                        </androidx.cardview.widget.CardView>
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                >
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recommended"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:listitem="@layout/product_item"
+                                    />
+                            </RelativeLayout>
+
+                        </LinearLayout>
 
                     </LinearLayout>
-                </HorizontalScrollView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:background="@color/back_home"
-                    android:layout_margin="10dp"
-                    >
+                </ScrollView>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Take Your Pick"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/nunitoregular"
-                            android:textSize="16sp"
-                            />
-                        <TextView
-                            android:id="@+id/viewTake"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textColor="@color/green"
-                            android:layout_alignParentEnd="true"
-                            android:fontFamily="@font/nunitobold"
-                            android:layout_alignParentRight="true" />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        >
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerTake"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            />
-                    </RelativeLayout>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Fresh Vegetables"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/nunitoregular"
-                            android:textSize="16sp"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textColor="@color/green"
-                            android:layout_alignParentEnd="true"
-                            android:fontFamily="@font/nunitobold"
-                            android:layout_alignParentRight="true" />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        >
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerVegetables"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            />
-                    </RelativeLayout>
+        </LinearLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Fresh Fruits"
-                            android:textColor="@color/black"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/nunitoregular"
-                            android:textSize="16sp"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View All"
-                            android:textColor="@color/green"
-                            android:layout_alignParentEnd="true"
-                            android:fontFamily="@font/nunitobold"
-                            android:layout_alignParentRight="true" />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        >
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerFruits"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            tools:listitem="@layout/category_item"
-                            />
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </ScrollView>
-
+        <ProgressBar
+            android:id="@+id/progressHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            style="@style/Widget.MaterialComponents.LinearProgressIndicator"
+            />
     </RelativeLayout>
 
 </FrameLayout>

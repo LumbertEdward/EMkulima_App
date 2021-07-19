@@ -22,4 +22,9 @@
     <style name="themeNav" parent="Widget.AppCompat.TextView">
         <item name="fontFamily">@font/nunitobold</item>
     </style>
+
+    <style name="spinnerItems" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@color/green</item>
+
+    </style>
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/green"
     android:layout_height="wrap_content">
     <RelativeLayout
@@ -14,23 +15,35 @@
             android:orientation="horizontal"
             >
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/profile_back"
+            <androidx.cardview.widget.CardView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="50dp"
                 >
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/google"
-                    />
-            </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <ImageView
+                        android:id="@+id/imgProfile"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/ic_baseline_person_24"
+                        android:scaleType="fitXY"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        app:tint="@color/green"
+                        />
+
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
                 <TextView
+                    android:id="@+id/txtHeaderEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="lumbert@gmail.com"
