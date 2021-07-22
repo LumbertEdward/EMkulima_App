@@ -1,33 +1,55 @@
 package com.example.emkulimaapp.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
+import androidx.cardview.widget.CardView
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.example.emkulimaapp.R
+import com.example.emkulimaapp.RetrofitClasses.ProfileRetrofit
+import com.example.emkulimaapp.RetrofitClasses.UpdateProfileRetrofit
+import com.example.emkulimaapp.interfaces.GeneralInterface
+import com.example.emkulimaapp.interfaces.ProfileInterface
+import com.example.emkulimaapp.interfaces.UpdateProfileInterface
+import com.example.emkulimaapp.models.AllCustomer
+import com.example.emkulimaapp.models.Customer
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    @BindView(R.id.editFirst)
+    lateinit var first: EditText
+    @BindView(R.id.editLast)
+    lateinit var last: EditText
+    @BindView(R.id.editEmail)
+    lateinit var email: EditText
+    @BindView(R.id.editLocation)
+    lateinit var location: EditText
+    @BindView(R.id.editPhone)
+    lateinit var phone: EditText
+    @BindView(R.id.cardSubmitProfile)
+    lateinit var submit: CardView
+    @BindView(R.id.scrollProfile)
+    lateinit var scroll: ScrollView
+    @BindView(R.id.progressProfile)
+    lateinit var profile: ProgressBar
+    @BindView(R.id.imgLogOut)
+    lateinit var logOut: ImageView
+
+    private lateinit var profileInterface: ProfileInterface
+    private lateinit var updateProfileInterface: UpdateProfileInterface
+    private lateinit var generalInterface: GeneralInterface
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -35,26 +57,80 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val view: View = View.inflate(activity, R.layout.fragment_profile, null)
+        ButterKnife.bind(this, view)
+        getDetails()
+        profile.visibility = View.VISIBLE
+        scroll.visibility = View.GONE
+        submit.setOnClickListener {
+            sendDetails()
+        }
+
+        logOut.setOnClickListener {
+            generalInterface.logOut()
+        }
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun sendDetails() {
+        var fs = first.text.toString().trim()
+        var ls = last.text.toString().trim()
+        var pn = phone.text.toString().trim()
+        var lc = location.text.toString().trim()
+
+        var sharedPreferences: SharedPreferences = activity?.getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        updateProfileInterface = UpdateProfileRetrofit.getRetrofit().create(UpdateProfileInterface::class.java)
+        val call: Call<AllCustomer> = updateProfileInterface.updateUser(userId, fs, ls, pn, lc)
+        call.enqueue(object : Callback<AllCustomer>{
+            override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
+                if (response.isSuccessful){
+                    Toast.makeText(activity, "Updated", Toast.LENGTH_LONG).show()
                 }
             }
+
+            override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
+                Toast.makeText(activity, "Check Internet Connection", Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
+
+    private fun getDetails() {
+        var sharedPreferences: SharedPreferences = activity?.getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        profileInterface = ProfileRetrofit.getRetrofit().create(ProfileInterface::class.java)
+        val call: Call<AllCustomer> = profileInterface.getUserDetails(userId)
+        call.enqueue(object : Callback<AllCustomer>{
+            override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
+                if (response.isSuccessful){
+                    profile.visibility = View.GONE
+                    showDetails(response.body()!!.data)
+                }
+            }
+
+            override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
+                Toast.makeText(activity, "Check Internet Connection", Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
+
+    private fun showDetails(data: ArrayList<Customer>) {
+        if (data.size > 0){
+            first.setText(data[0].firstName.toString())
+            last.setText(data[0].lastName.toString())
+            email.setText(data[0].email.toString())
+            location.setText(data[0].location.toString())
+            phone.setText(data[0].phoneNumber)
+            scroll.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        generalInterface = context as GeneralInterface
     }
 }

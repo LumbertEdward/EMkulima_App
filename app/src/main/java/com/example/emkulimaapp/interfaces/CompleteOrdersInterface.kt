@@ -8,6 +8,6 @@ import retrofit2.http.Path
 interface CompleteOrdersInterface {
     @GET("customer/products/{user_id}/completeorders")
     fun getCompleted(
-        @Path("user_id") userId: Int
+        @Path("user_id") userId: String
     ): Call<AllOrders>
 }

@@ -14,4 +14,5 @@
     <color name="purple">#522E99</color>
     <color name="blue">#2062C3</color>
     <color name="blue_det">#2A7BEF</color>
+    <color name="shimmer_color">#dddddd</color>
 </resources>

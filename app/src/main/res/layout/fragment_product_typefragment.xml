@@ -56,11 +56,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
+                <TextView
+                    android:id="@+id/txtNoProductType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Product"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/nunitobold"
+                    android:textSize="25sp"
+                    />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerProductsType"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:listitem="@layout/product_item"
+                    />
+                <ProgressBar
+                    android:id="@+id/progressProdType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
                     />
             </RelativeLayout>
 

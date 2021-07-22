@@ -12,15 +12,22 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.emkulimaapp.R
 import com.example.emkulimaapp.RetrofitClasses.CartRetrofit
+import com.example.emkulimaapp.RetrofitClasses.FavouritesRetrofit
+import com.example.emkulimaapp.RetrofitClasses.RecommendedDetailsRetrofit
 import com.example.emkulimaapp.adapters.ProductAdapter
 import com.example.emkulimaapp.constants.constants
 import com.example.emkulimaapp.interfaces.CartInterface
+import com.example.emkulimaapp.interfaces.FavouritesInterface
+import com.example.emkulimaapp.interfaces.RecommendedDetailsInterface
+import com.example.emkulimaapp.models.AllFavourites
+import com.example.emkulimaapp.models.AllProducts
 import com.example.emkulimaapp.models.Product
 import com.example.emkulimaapp.models.message
 import com.squareup.picasso.OkHttp3Downloader
@@ -44,10 +51,20 @@ class ProductDetailsFragment : Fragment() {
     lateinit var description: TextView
     @BindView(R.id.recyclerRecommendDetail)
     lateinit var recyclerView: RecyclerView
+    @BindView(R.id.imgFavDet)
+    lateinit var fav: ImageView
+    @BindView(R.id.imgSubtract)
+    lateinit var subtract: ImageView
+    @BindView(R.id.imgAdd)
+    lateinit var add: ImageView
+    @BindView(R.id.cartItemQuantity)
+    lateinit var quantity: TextView
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var productAdapter: ProductAdapter
     private lateinit var cartInterface: CartInterface
+    private lateinit var recommendedDetailsInterface: RecommendedDetailsInterface
+    private lateinit var favouritesInterface: FavouritesInterface
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,15 +79,43 @@ class ProductDetailsFragment : Fragment() {
         val view: View = View.inflate(activity, R.layout.fragment_product_details, null)
         ButterKnife.bind(this, view)
         this.back.setOnClickListener {
-
+            findNavController().navigate(R.id.productsFragment)
         }
 
         this.cart.setOnClickListener {
             sendToCart()
         }
+
+        fav.setOnClickListener {
+            addToFav()
+        }
         setDetails()
         setRecommended()
         return view
+    }
+
+    private fun addToFav() {
+        var sharedPreferences: SharedPreferences = activity?.getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        var productContent = arguments?.getParcelable<Product>("PRODUCT")
+        val product_id = productContent!!.productId!!
+
+        favouritesInterface = FavouritesRetrofit.getRetrofit().create(FavouritesInterface::class.java)
+        var call: Call<AllFavourites> = favouritesInterface.checkOut(userId, product_id)
+        call.enqueue(object : Callback<AllFavourites>{
+            override fun onResponse(call: Call<AllFavourites>, response: Response<AllFavourites>) {
+                if (response.isSuccessful){
+                    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
+                    fav.setImageResource(R.drawable.ic_baseline_favorite_24)
+                }
+            }
+
+            override fun onFailure(call: Call<AllFavourites>, t: Throwable) {
+                Toast.makeText(activity, "Not Added", Toast.LENGTH_LONG).show()
+            }
+
+        })
     }
 
     private fun sendToCart() {
@@ -79,7 +124,7 @@ class ProductDetailsFragment : Fragment() {
         var productContent = arguments?.getParcelable<Product>("PRODUCT")
 
         cartInterface = CartRetrofit.getRetrofit().create(CartInterface::class.java)
-        var call: Call<message> = cartInterface.addToCart(productContent!!.productId!!, productContent.farmerId!!, userId!!.toInt(), productContent.name!!, productContent.desc!!, productContent.price!!, productContent.img!!, productContent.type!!, productContent.calcs!!, productContent.time!!)
+        var call: Call<message> = cartInterface.addToCart(productContent!!.productId!!, productContent.farmerId!!, userId!!, quantity.text.toString().toInt())
         call.enqueue(object : Callback<message> {
             override fun onResponse(call: Call<message>, response: Response<message>) {
                 if (response.isSuccessful){
@@ -88,7 +133,7 @@ class ProductDetailsFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<message>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
         })
 
@@ -96,14 +141,36 @@ class ProductDetailsFragment : Fragment() {
 
     private fun setDetails() {
         val product = arguments?.getParcelable<Product>("PRODUCT")
+        var total: Int = 1
+        add.setOnClickListener {
+            total += 1
+            quantity.text = total.toString()
+            price.text = (product!!.price!!.toInt() * total).toString()
+        }
+
+        subtract.setOnClickListener {
+            if (total == 1){
+                total = 1
+                quantity.text = total.toString()
+                price.text = (product!!.price!!.toInt() * total).toString()
+            }
+            else{
+                total -= 1
+                quantity.text = total.toString()
+                price.text = (product!!.price!!.toInt() * total).toString()
+            }
+        }
+
+
         if (product != null){
             var img = product.img.toString()
             var title = product.name.toString()
             var price = product.price.toString()
             var description = product.desc.toString()
+            val productPrice = price.toInt() * quantity.text.toString().toInt()
 
             this.title.text = title
-            this.price.text = price
+            this.price.text = (product!!.price!!.toInt() * total).toString()
             this.description.text = description
 
             val activity = activity as Context
@@ -114,8 +181,31 @@ class ProductDetailsFragment : Fragment() {
     }
 
     private fun setRecommended() {
+        val product = arguments?.getParcelable<Product>("PRODUCT")
+        val type = product!!.type.toString()
         val activity = activity as Context
         gridLayoutManager = GridLayoutManager(activity, 2)
         productAdapter = ProductAdapter(activity)
+        recommendedDetailsInterface = RecommendedDetailsRetrofit.getRetrofit().create(RecommendedDetailsInterface::class.java)
+        val call: Call<AllProducts> = recommendedDetailsInterface.getProductByType(type)
+        call.enqueue(object : Callback<AllProducts>{
+            override fun onResponse(call: Call<AllProducts>, response: Response<AllProducts>) {
+                if (response.isSuccessful){
+                    getRecommended(response.body()!!.all)
+                }
+            }
+
+            override fun onFailure(call: Call<AllProducts>, t: Throwable) {
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
+
+    private fun getRecommended(all: ArrayList<Product>) {
+        productAdapter.getData(all)
+        recyclerView.adapter = productAdapter
+        recyclerView.layoutManager = gridLayoutManager
+
     }
 }

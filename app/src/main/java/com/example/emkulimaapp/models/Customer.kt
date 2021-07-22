@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 class Customer(
     @SerializedName("userId")
     @Expose
-    var userId: Int? = null,
+    var userId: String? = null,
     @SerializedName("first_name")
     @Expose
     var firstName: String? = null,
@@ -32,7 +32,7 @@ class Customer(
     var location: String? = null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -44,7 +44,7 @@ class Customer(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeValue(userId)
+        parcel.writeString(userId)
         parcel.writeString(firstName)
         parcel.writeString(lastName)
         parcel.writeString(email)
@@ -67,4 +67,5 @@ class Customer(
             return arrayOfNulls(size)
         }
     }
+
 }

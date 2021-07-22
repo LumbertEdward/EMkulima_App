@@ -28,12 +28,16 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.example.emkulimaapp.RetrofitClasses.*
 import com.example.emkulimaapp.authentication.Login
 import com.example.emkulimaapp.fragments.*
+import com.example.emkulimaapp.interfaces.DeleteFavouriteInterface
+import com.example.emkulimaapp.interfaces.Favourites.CheckingProductInterface
+import com.example.emkulimaapp.interfaces.Favourites.ProductFavouritesInterface
+import com.example.emkulimaapp.interfaces.FavouritesCheckingProductsInterface
+import com.example.emkulimaapp.interfaces.FavouritesInterface
 import com.example.emkulimaapp.interfaces.GeneralInterface
-import com.example.emkulimaapp.models.Cart
-import com.example.emkulimaapp.models.FragmentClass
-import com.example.emkulimaapp.models.Product
+import com.example.emkulimaapp.models.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -41,14 +45,21 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity(), GeneralInterface {
     @BindView(R.id.bottom)
     lateinit var bot: BottomNavigationView
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var productFavouritesInterface: ProductFavouritesInterface
+    private lateinit var checkingProductInterface: CheckingProductInterface
+    private lateinit var deleteFavouriteInterface: DeleteFavouriteInterface
 
     private lateinit var navController: NavController
+    private var totItem: Int = 1
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +67,10 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
         navController = findNavController(R.id.navHost)
+
+        if (navController.currentDestination?.label.toString().contains("fragment_product_details")) {
+            Toast.makeText(this, "Cart", Toast.LENGTH_LONG).show()
+        }
 
         sharedPreferences = this.getSharedPreferences("USER", MODE_PRIVATE)
 
@@ -90,6 +105,11 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
                 }
                 R.id.profile -> {
                     navController.navigate(R.id.profileFragment)
+                    hideBottom()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.orders -> {
+                    navController.navigate(R.id.ordersFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
                 else -> {
@@ -99,7 +119,112 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         }
     }
 
-    private fun logOut() {
+
+    private fun showBottom(){
+        this.bot.visibility = View.VISIBLE
+    }
+
+    private fun hideBottom(){
+        this.bot.visibility = View.GONE
+    }
+
+    override fun getAllProducts() {
+        navController.navigate(R.id.action_homeFragment_to_productsFragment)
+    }
+
+    override fun passDetails(product: Product) {
+        var bundle: Bundle = Bundle()
+        bundle.putParcelable("PRODUCT", product)
+
+        navController.navigate(R.id.action_productsFragment_to_productDetailsFragment, bundle)
+    }
+
+    override fun getTypeSelected(type: String) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("PRODUCTTYPE", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("TYPE", type)
+        editor.apply()
+
+        navController.navigate(R.id.action_homeFragment_to_productTypefragment)
+    }
+
+    override fun goToCheckout(lst: ArrayList<Product>) {
+        var bundle: Bundle = Bundle()
+        bundle.putParcelableArrayList("CART", lst)
+        navController.navigate(R.id.action_cartFragment_to_checkOutFragment, bundle)
+    }
+
+    override fun goToOrders() {
+        navController.navigate(R.id.action_checkOutFragment_to_ordersFragment)
+    }
+
+    override fun addToFavourites(product_id: Int, view: ImageView) {
+        var sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        checkingProductInterface = CheckingProductsRetrofit.getRetrofit().create(CheckingProductInterface::class.java)
+        val call: Call<AllFavourites> = checkingProductInterface.checking(userId, product_id)
+        call.enqueue(object : Callback<AllFavourites>{
+            override fun onResponse(call: Call<AllFavourites>, response: Response<AllFavourites>) {
+                if (response.isSuccessful){
+                    if (response.body()!!.all.size < 1){
+                        AddFavourites(product_id, view)
+                    }
+                    else{
+                        Toast.makeText(this@MainActivity, "Already added", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<AllFavourites>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Product Already Added", Toast.LENGTH_LONG).show()
+            }
+
+        })
+
+    }
+
+    private fun AddFavourites(productId: Int, view: ImageView) {
+        var sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        productFavouritesInterface = ProductFavouritesRetrofit.getRetrofit().create(ProductFavouritesInterface::class.java)
+        var call: Call<AllFavourites> = productFavouritesInterface.checkOut(userId, productId)
+        call.enqueue(object : Callback<AllFavourites>{
+            override fun onResponse(call: Call<AllFavourites>, response: Response<AllFavourites>) {
+                if (response.isSuccessful){
+                    view.setImageResource(R.drawable.ic_baseline_favorite_24)
+                }
+            }
+
+            override fun onFailure(call: Call<AllFavourites>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Not Added", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+
+    override fun removeFromFavourites(product_id: Int) {
+        var sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        deleteFavouriteInterface = DeleteFavouriteRetrofit.getRetrofit().create(DeleteFavouriteInterface::class.java)
+        val call: Call<AllFavourites> = deleteFavouriteInterface.getFavourites(userId, product_id)
+        call.enqueue(object : Callback<AllFavourites>{
+            override fun onResponse(call: Call<AllFavourites>, response: Response<AllFavourites>) {
+                if (response.isSuccessful){
+                    Toast.makeText(this@MainActivity, "Removed", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AllFavourites>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Check Network Connection", Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
+
+    override fun logOut() {
         val googleSignInOptions: GoogleSignInOptions = GoogleSignInOptions.Builder(
             GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -118,41 +243,5 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         }
     }
 
-    private fun showBottom(){
-        this.bot.visibility = View.VISIBLE
-    }
 
-    private fun hideBottom(){
-        this.bot.visibility = View.GONE
-    }
-
-    override fun getAllProducts() {
-        navController.navigate(R.id.action_homeFragment_to_productsFragment)
-    }
-
-    override fun passDetails(product: Product) {
-        var bundle: Bundle = Bundle()
-        bundle.putParcelable("PRODUCT", product)
-
-        navController.navigate(R.id.productDetailsFragment, bundle)
-    }
-
-    override fun getTypeSelected(type: String) {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("PRODUCTTYPE", Context.MODE_PRIVATE)
-        val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putString("TYPE", type)
-        editor.apply()
-
-        navController.navigate(R.id.action_homeFragment_to_productTypefragment)
-    }
-
-    override fun goToCheckout(lst: ArrayList<Cart>) {
-        var bundle: Bundle = Bundle()
-        bundle.putParcelableArrayList("CART", lst)
-        navController.navigate(R.id.action_cartFragment_to_checkOutFragment, bundle)
-    }
-
-    override fun goToOrders() {
-        navController.navigate(R.id.action_checkOutFragment_to_ordersFragment)
-    }
 }

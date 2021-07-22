@@ -13,7 +13,7 @@
     <string name="PRODUCT_DETAILS">DETAILS</string>
     <string name="PRODUCTYPEFRAG">PRODUCTTYPE</string>
     <string name="CHECKOUT">CHECKOUT</string>
-    <string name="MONEY">$</string>
+    <string name="MONEY">Ksh</string>
     <string name="ORDERS">ORDERS</string>
     <string name="vegetables">Order fresh vegetables from the farm and experience the best flavour</string>
     <string name="order">Your order has is being prepared for delivery, You will be notified when your order has arrived</string>

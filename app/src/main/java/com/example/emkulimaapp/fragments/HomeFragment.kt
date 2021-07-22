@@ -1,6 +1,7 @@
 package com.example.emkulimaapp.fragments
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
@@ -8,12 +9,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.ScrollView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +34,7 @@ import com.example.emkulimaapp.interfaces.Home.RecommendedProductsInterface
 import com.example.emkulimaapp.interfaces.Home.VegetableInterface
 import com.example.emkulimaapp.models.AllProducts
 import com.example.emkulimaapp.models.Product
+import com.facebook.shimmer.ShimmerFrameLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,6 +48,8 @@ class HomeFragment : Fragment() {
     lateinit var dairy: CardView
     @BindView(R.id.cardMeat)
     lateinit var meat: CardView
+    @BindView(R.id.cardPoultry)
+    lateinit var poultry: CardView
     @BindView(R.id.recyclerTake)
     lateinit var recyclerView: RecyclerView
     @BindView(R.id.recyclerVegetables)
@@ -68,6 +70,16 @@ class HomeFragment : Fragment() {
     lateinit var scroll: ScrollView
     @BindView(R.id.swipeHome)
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.imgNotificationIcon)
+    lateinit var notIcon: ImageView
+    @BindView(R.id.txtNotNumber)
+    lateinit var notNumb: TextView
+    @BindView(R.id.shimmerFrame)
+    lateinit var shimmeFrame: ShimmerFrameLayout
+    @BindView(R.id.shimmerVegetables)
+    lateinit var shimmeVeg: ShimmerFrameLayout
+    @BindView(R.id.shimmerFruit)
+    lateinit var shimmeFruit: ShimmerFrameLayout
 
     private lateinit var takeLinearLayoutManager: LinearLayoutManager
     private lateinit var categoryLinearLayoutManager: LinearLayoutManager
@@ -102,13 +114,36 @@ class HomeFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = false
         }
+        shimmeFrame.startShimmer()
+        shimmeFruit.startShimmer()
+        shimmeVeg.startShimmer()
+        shimmeFrame.visibility = View.VISIBLE
+        shimmeVeg.visibility = View.VISIBLE
+        shimmeFruit.visibility = View.VISIBLE
+        notIcon.setOnClickListener {
+            findNavController().navigate(R.id.notificationsFragment)
+        }
+        notNumb.visibility = View.GONE
         setTypes()
         setSelectedCategory()
         setTakeItems()
         setVegetablesCategory()
         setFruitsCategory()
         setRecommended()
+        setNotifications()
         return view
+    }
+
+    private fun setNotifications() {
+        var sharedPreferences: SharedPreferences = activity?.getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
+        var total: Int = sharedPreferences.getInt("TOTAL", 0)
+        if (total > 0){
+            notNumb.visibility = View.VISIBLE
+            notNumb.text = total.toString()
+        }
+        else{
+            notNumb.visibility = View.GONE
+        }
     }
 
     private fun setTypes() {
@@ -131,6 +166,10 @@ class HomeFragment : Fragment() {
             val type = "Dairy"
             generalInterface.getTypeSelected(type)
         }
+        poultry.setOnClickListener {
+            val type = "Poultry"
+            generalInterface.getTypeSelected(type)
+        }
     }
 
     private fun setRecommended() {
@@ -148,7 +187,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -177,6 +216,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setFruitsCategory() {
+        recyclerFruits.visibility = View.GONE
         val activity = activity as Context
         categoryAdapter = CategoryAdapter(activity)
         fruitsLinearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -186,12 +226,14 @@ class HomeFragment : Fragment() {
         call.enqueue(object: Callback<AllProducts>{
             override fun onResponse(call: Call<AllProducts>, response: Response<AllProducts>) {
                 if (response.isSuccessful){
+                    recyclerFruits.visibility = View.VISIBLE
+                    shimmeFruit.visibility = View.GONE
                     getFruits(response.body()!!.all)
                 }
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -206,6 +248,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setVegetablesCategory() {
+        recyclerVeg.visibility = View.GONE
         val activity = activity as Context
         categoryAdapter = CategoryAdapter(activity)
         categoryLinearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -215,12 +258,14 @@ class HomeFragment : Fragment() {
         call.enqueue(object: Callback<AllProducts>{
             override fun onResponse(call: Call<AllProducts>, response: Response<AllProducts>) {
                 if (response.isSuccessful){
+                    recyclerVeg.visibility = View.VISIBLE
+                    shimmeVeg.visibility = View.GONE
                     getVegetables(response.body()!!.all)
                 }
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -233,6 +278,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setTakeItems() {
+        recyclerView.visibility = View.GONE
         val activity = activity as Context
         takeAdapter = TakeAdapter(activity)
         takeLinearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -242,12 +288,14 @@ class HomeFragment : Fragment() {
         call.enqueue(object: Callback<AllProducts>{
             override fun onResponse(call: Call<AllProducts>, response: Response<AllProducts>) {
                 if (response.isSuccessful){
+                    shimmeFrame.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
                     getChoice(response.body()!!.all)
                 }
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })

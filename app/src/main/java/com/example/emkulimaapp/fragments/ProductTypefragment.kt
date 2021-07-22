@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
@@ -34,6 +36,10 @@ class ProductTypefragment : Fragment() {
     lateinit var title: TextView
     @BindView(R.id.searchProdsType)
     lateinit var search: ImageView
+    @BindView(R.id.txtNoProductType)
+    lateinit var txtProdType: TextView
+    @BindView(R.id.progressProdType)
+    lateinit var progress: ProgressBar
 
     private lateinit var productAdapter: ProductAdapter
     private lateinit var gridLayoutManager: GridLayoutManager
@@ -49,6 +55,15 @@ class ProductTypefragment : Fragment() {
     ): View? {
         val view: View = View.inflate(activity, R.layout.fragment_product_typefragment, null)
         ButterKnife.bind(this, view)
+        back.setOnClickListener {
+            findNavController().navigate(R.id.homeFragment)
+        }
+        search.setOnClickListener {
+            findNavController().navigate(R.id.searchFragment)
+        }
+        txtProdType.visibility = View.GONE
+        recyclerView.visibility = View.GONE
+        progress.visibility = View.VISIBLE
         getData()
         return view
     }
@@ -61,6 +76,8 @@ class ProductTypefragment : Fragment() {
         val sharedPreferences: SharedPreferences = activity.getSharedPreferences("PRODUCTTYPE", Context.MODE_PRIVATE)
         var type = sharedPreferences.getString("TYPE", "Vegetables")
 
+        title.text = type.toString()
+
         productTypeInterface = ProductTypeRetrofit.getRetrofit().create(ProductTypeInterface::class.java)
         val call: retrofit2.Call<AllProducts> = productTypeInterface.getProductByType(type.toString())
         call.enqueue(object : retrofit2.Callback<AllProducts>{
@@ -69,20 +86,27 @@ class ProductTypefragment : Fragment() {
                 response: Response<AllProducts>
             ) {
                 if (response.isSuccessful){
+                    progress.visibility = View.GONE
                     showData(response.body()!!.all)
                 }
             }
 
             override fun onFailure(call: retrofit2.Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
         })
     }
 
     private fun showData(all: ArrayList<Product>) {
-        productAdapter.getData(all)
-        this.recyclerView.adapter = productAdapter
-        this.recyclerView.layoutManager = gridLayoutManager
+        if (all.size > 0){
+            productAdapter.getData(all)
+            this.recyclerView.adapter = productAdapter
+            this.recyclerView.layoutManager = gridLayoutManager
+            recyclerView.visibility = View.VISIBLE
+        }
+        else{
+            txtProdType.visibility = View.VISIBLE
+        }
 
     }
 }

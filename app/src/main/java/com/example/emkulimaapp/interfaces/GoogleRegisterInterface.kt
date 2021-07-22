@@ -10,6 +10,7 @@ interface GoogleRegisterInterface {
     @POST("customer/googleRegister")
     @FormUrlEncoded
     fun sendUser(
+        @Field("userId") userId: String,
         @Field("first_name") firstName: String,
         @Field("last_name") lastName: String,
         @Field("email") email: String,

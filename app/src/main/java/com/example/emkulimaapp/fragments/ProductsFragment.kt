@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
@@ -34,6 +36,10 @@ class ProductsFragment : Fragment() {
     lateinit var title: TextView
     @BindView(R.id.searchProds)
     lateinit var search: ImageView
+    @BindView(R.id.progressProduct)
+    lateinit var progress: ProgressBar
+    @BindView(R.id.txtNoProduct)
+    lateinit var txtNo: TextView
 
     private lateinit var productAdapter: ProductAdapter
     private lateinit var gridLayoutManager: GridLayoutManager
@@ -53,8 +59,15 @@ class ProductsFragment : Fragment() {
         val view: View = View.inflate(activity, R.layout.fragment_products, null)
         ButterKnife.bind(this, view)
         this.back.setOnClickListener {
-            generalInterface.onBackPressed()
+            findNavController().navigate(R.id.homeFragment)
         }
+
+        search.setOnClickListener {
+            findNavController().navigate(R.id.searchFragment)
+        }
+        progress.visibility = View.VISIBLE
+        txtNo.visibility = View.GONE
+        recyclerView.visibility = View.GONE
         getProducts()
         return view
     }
@@ -69,21 +82,29 @@ class ProductsFragment : Fragment() {
         call.enqueue(object : Callback<AllProducts>{
             override fun onResponse(call: Call<AllProducts>, response: Response<AllProducts>) {
                 if (response.isSuccessful){
+                    progress.visibility = View.GONE
                     showData(response.body()!!.all)
                 }
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
     }
 
     private fun showData(all: ArrayList<Product>) {
-        productAdapter.getData(all)
-        this.recyclerView.adapter = productAdapter
-        this.recyclerView.layoutManager = gridLayoutManager
+        if (all.size > 0){
+            productAdapter.getData(all)
+            this.recyclerView.adapter = productAdapter
+            this.recyclerView.layoutManager = gridLayoutManager
+            recyclerView.visibility = View.VISIBLE
+        }
+        else{
+            txtNo.visibility = View.VISIBLE
+        }
+
     }
 
     override fun onAttach(context: Context) {

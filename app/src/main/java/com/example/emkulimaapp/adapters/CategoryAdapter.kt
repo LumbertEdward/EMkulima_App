@@ -29,12 +29,11 @@ open class CategoryAdapter(val context: Context): RecyclerView.Adapter<RecyclerV
         myViewHolder.cal.text = lst[position].calcs.toString()
         myViewHolder.time.text = lst[position].time + " mins"
         myViewHolder.cal.text = lst[position].calcs.toString() + " kcal"
-        myViewHolder.time.text = lst[position].time
         val picasso: Picasso.Builder = Picasso.Builder(context)
         picasso.downloader(OkHttp3Downloader(context))
         picasso.build().load(constants.BASE_URL + lst[position].img).into(myViewHolder.img)
         myViewHolder.fav.setOnClickListener {
-
+            generalInterface.addToFavourites(lst[position].productId!!, myViewHolder.imgFav)
         }
         myViewHolder.card.setOnClickListener {
             generalInterface.passDetails(lst[position])
@@ -57,6 +56,7 @@ open class CategoryAdapter(val context: Context): RecyclerView.Adapter<RecyclerV
         var time: TextView = view.findViewById(R.id.timeVeg)
         var cal: TextView = view.findViewById(R.id.calVeg)
         var fav: RelativeLayout = view.findViewById(R.id.relFavVegetables)
+        var imgFav: ImageView = view.findViewById(R.id.imgCatFav)
         var img: ImageView = view.findViewById(R.id.vegImg)
     }
 

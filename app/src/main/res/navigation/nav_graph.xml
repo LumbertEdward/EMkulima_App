@@ -70,7 +70,14 @@
         android:id="@+id/productsFragment"
         android:name="com.example.emkulimaapp.fragments.ProductsFragment"
         android:label="fragment_products"
-        tools:layout="@layout/fragment_products" />
+        tools:layout="@layout/fragment_products" >
+        <action
+            android:id="@+id/action_productsFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment"
+            app:enterAnim="@anim/slide_right_anim"
+            app:exitAnim="@anim/slide_out_anim"
+            app:popUpTo="@id/productsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.emkulimaapp.fragments.ProfileFragment"
@@ -81,4 +88,9 @@
         android:name="com.example.emkulimaapp.fragments.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.emkulimaapp.fragments.NotificationsFragment"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" />
 </navigation>

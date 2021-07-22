@@ -26,10 +26,11 @@
             android:layout_margin="8dp"
             >
             <ImageView
+                android:id="@+id/imgCatFav"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_baseline_favorite_border_24"
-                app:tint="@android:color/darker_gray"
+                app:tint="@color/green"
                 android:padding="3dp"
                 />
         </RelativeLayout>

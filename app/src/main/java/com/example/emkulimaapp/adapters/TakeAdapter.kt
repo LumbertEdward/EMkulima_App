@@ -27,9 +27,8 @@ open class TakeAdapter(val context: Context): RecyclerView.Adapter<RecyclerView.
         val myViewHolder: MyViewHolder = holder as MyViewHolder
         myViewHolder.name.text = lst[position].name
         myViewHolder.cal.text = lst[position].calcs.toString()
-        myViewHolder.time.text = lst[position].time + " mins"
+        myViewHolder.time.text = lst[position].time.toString() + "mins"
         myViewHolder.cal.text = lst[position].calcs.toString() + " kcal"
-        myViewHolder.time.text = lst[position].time
         val picasso: Picasso.Builder = Picasso.Builder(context)
         picasso.downloader(OkHttp3Downloader(context))
         picasso.build().load(constants.BASE_URL + lst[position].img).into(myViewHolder.img)

@@ -11,6 +11,7 @@ interface OrderInterface {
         @Field("order_id") orderId: String,
         @Field("order_price") orderPrice: Int,
         @Field("delivery_date") deliveryDate: String,
-        @Path("user_id") userId: Int
+        @Field("delivery_time") deliveryTime: String,
+        @Path("user_id") userId: String
     ): Call<AllOrders>
 }

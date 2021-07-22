@@ -11,6 +11,7 @@ interface RegsiterInterface {
     @POST("customer/register")
     @FormUrlEncoded
     fun registerUser(
+        @Field("userId") userId: String,
         @Field("first_name") firstName: String,
         @Field("last_name") lastName: String,
         @Field("email") email: String,

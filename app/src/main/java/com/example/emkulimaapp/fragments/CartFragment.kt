@@ -2,26 +2,30 @@ package com.example.emkulimaapp.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.emkulimaapp.R
 import com.example.emkulimaapp.RetrofitClasses.CartRetrofit
+import com.example.emkulimaapp.RetrofitClasses.RecommendedCartRetrofit
 import com.example.emkulimaapp.RetrofitClasses.ViewCartItemsRetrofit
 import com.example.emkulimaapp.adapters.CartAdapter
 import com.example.emkulimaapp.adapters.ProductAdapter
+import com.example.emkulimaapp.adapters.SwipeToDeleteCallBack
 import com.example.emkulimaapp.interfaces.CartInterface
 import com.example.emkulimaapp.interfaces.GeneralInterface
+import com.example.emkulimaapp.interfaces.RecommendedCartInterface
 import com.example.emkulimaapp.interfaces.ViewCartItemsInterface
 import com.example.emkulimaapp.models.*
 import org.json.JSONObject
@@ -40,8 +44,12 @@ class CartFragment : Fragment() {
     lateinit var no: TextView
     @BindView(R.id.totalPrice)
     lateinit var price: TextView
-
-    private var lst: ArrayList<Cart> = ArrayList()
+    @BindView(R.id.linCart)
+    lateinit var linCart: LinearLayout
+    @BindView(R.id.progressCart)
+    lateinit var progress: ProgressBar
+    @BindView(R.id.relSnack)
+    lateinit var snack: RelativeLayout
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -49,11 +57,16 @@ class CartFragment : Fragment() {
     private lateinit var cartAdapter: CartAdapter
     private lateinit var viewCartItemsInterface: ViewCartItemsInterface
     private lateinit var generalInterface: GeneralInterface
+    private lateinit var recommendedCartInterface: RecommendedCartInterface
+
+    private var lstAll: ArrayList<Product> = ArrayList()
+    private var lstFiltered: ArrayList<Product> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,13 +80,25 @@ class CartFragment : Fragment() {
         no.visibility = View.VISIBLE
         cart.visibility = View.GONE
 
+        linCart.visibility = View.GONE
+        progress.visibility = View.VISIBLE
+
         showCart()
         showRecommendation()
+        enableSwipeToDelete()
         return view
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun enableSwipeToDelete() {
+        val activity = activity as Context
+        val swipeToDeleteCallBack: SwipeToDeleteCallBack = SwipeToDeleteCallBack(activity, cartAdapter, snack)
+        val itemTouchHelper: ItemTouchHelper = ItemTouchHelper(swipeToDeleteCallBack)
+        itemTouchHelper.attachToRecyclerView(cart)
+    }
+
     private fun goToCheckOut() {
-        generalInterface.goToCheckout(lst)
+        generalInterface.goToCheckout(lstFiltered)
     }
 
     private fun showCart() {
@@ -89,12 +114,14 @@ class CartFragment : Fragment() {
         }
         else{
             viewCartItemsInterface = ViewCartItemsRetrofit.getRetrofit().create(ViewCartItemsInterface::class.java)
-            val call: Call<AllCart> = viewCartItemsInterface.viewItems(userId.toInt())
+            val call: Call<AllCart> = viewCartItemsInterface.viewItems(userId)
             call.enqueue(object : Callback<AllCart>{
                 override fun onResponse(call: Call<AllCart>, response: Response<AllCart>) {
                     if (response.isSuccessful){
                         no.visibility = View.GONE
                         cart.visibility = View.VISIBLE
+                        linCart.visibility = View.VISIBLE
+                        progress.visibility = View.GONE
                         getData(response.body()!!.data)
                     }
                 }
@@ -108,23 +135,31 @@ class CartFragment : Fragment() {
     }
 
     private fun getData(data: ArrayList<Cart>) {
-        cartAdapter.getData(data)
-        this.cart.adapter = cartAdapter
-        this.cart.layoutManager = linearLayoutManager
-
-        var y: Int = 0
-        for(i in data.indices){
-            if (data[i].price == null){
-                y = 0
+        for (j in data.indices){
+            for (l in lstAll.indices){
+                if (lstAll[l].productId == data[j].productId){
+                    lstFiltered.add(lstAll[l])
+                }
             }
-            else{
-                y += data[i].price!!
-            }
-
         }
-        price.text = getString(R.string.MONEY) + y.toString()
 
-        lst = data
+        if (lstFiltered.size > 0){
+            cartAdapter.getData(lstFiltered, data)
+            this.cart.adapter = cartAdapter
+            this.cart.layoutManager = linearLayoutManager
+
+            var y: Int = 0
+            for(i in lstFiltered.indices){
+                if (lstFiltered[i].price == null){
+                    y = 0
+                }
+                else{
+                    y += lstFiltered[i].price!!
+                }
+
+            }
+            price.text = getString(R.string.MONEY) + y.toString()
+        }
     }
 
     private fun showRecommendation() {
@@ -132,6 +167,28 @@ class CartFragment : Fragment() {
         gridLayoutManager = GridLayoutManager(activity, 2)
         productAdapter = ProductAdapter(activity)
 
+        recommendedCartInterface = RecommendedCartRetrofit.getRetrofit().create(RecommendedCartInterface::class.java)
+        val call: Call<AllProducts> = recommendedCartInterface.getProducts()
+        call.enqueue(object : Callback<AllProducts>{
+            override fun onResponse(call: Call<AllProducts>, response: Response<AllProducts>) {
+                if (response.isSuccessful){
+                    setRecommended(response.body()!!.all)
+                }
+            }
+
+            override fun onFailure(call: Call<AllProducts>, t: Throwable) {
+                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+            }
+
+        })
+
+    }
+
+    private fun setRecommended(all: ArrayList<Product>) {
+        lstAll.addAll(all)
+        productAdapter.getData(all)
+        recommend.adapter = productAdapter
+        recommend.layoutManager = gridLayoutManager
     }
 
     override fun onAttach(context: Context) {

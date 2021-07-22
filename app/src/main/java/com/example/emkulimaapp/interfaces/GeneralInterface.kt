@@ -1,5 +1,7 @@
 package com.example.emkulimaapp.interfaces
 
+import android.widget.ImageView
+import android.widget.TextView
 import com.example.emkulimaapp.models.Cart
 import com.example.emkulimaapp.models.Product
 
@@ -7,7 +9,9 @@ interface GeneralInterface {
     fun getAllProducts()
     fun passDetails(product: Product)
     fun getTypeSelected(type: String)
-    fun goToCheckout(lst: ArrayList<Cart>)
+    fun goToCheckout(lst: ArrayList<Product>)
     fun goToOrders()
-    fun onBackPressed()
+    fun addToFavourites(product_id: Int, view: ImageView)
+    fun removeFromFavourites(product_id: Int)
+    fun logOut()
 }

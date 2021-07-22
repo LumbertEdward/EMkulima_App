@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:id="@+id/relSearch"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
             app:cardCornerRadius="5dp"
             >
             <ImageView
+                android:id="@+id/imgSearch"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
@@ -23,15 +25,53 @@
                 />
 
         </androidx.cardview.widget.CardView>
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mango"
-            android:textColor="@color/black"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:fontFamily="@font/nunitobold"
-            />
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                >
+                <TextView
+                    android:id="@+id/txtSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mango"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/nunitobold"
+                    />
+                <TextView
+                    android:id="@+id/txtSearchPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ksh 700"
+                    android:textColor="@color/green"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/nunitobold"
+                    android:layout_marginTop="3dp"
+                    />
+
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/imgOthers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_more_vert_24"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                app:tint="@color/green" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

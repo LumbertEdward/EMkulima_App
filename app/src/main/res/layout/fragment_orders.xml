@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">
             <ImageView
+                android:id="@+id/imgBackOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_baseline_arrow_back_ios_24"
@@ -46,7 +47,7 @@
             app:tabTextColor="@android:color/darker_gray"
             app:tabSelectedTextColor="@color/green"
             />
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerOrders"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

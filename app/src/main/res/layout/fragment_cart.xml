@@ -3,10 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.CartFragment">
 
     <RelativeLayout
+        android:id="@+id/relSnack"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
@@ -36,99 +38,114 @@
                         android:layout_centerHorizontal="true"
                         />
                 </RelativeLayout>
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="match_parent"
                     >
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Single Items"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/nunitobold"
-                            />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="30dp"
-                        android:visibility="gone"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="OOPS!!, no Items in your cart"
-                            android:textColor="@android:color/darker_gray"
-                            android:fontFamily="@font/nunitobold"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:textSize="20sp"
-                            />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        >
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerCart"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="15dp"
-                            />
-                        <TextView
-                            android:id="@+id/txtNoItems"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="No Items"
-                            android:textColor="@color/black"
-                            android:layout_centerHorizontal="true"
-                            android:layout_margin="20dp"
-                            android:fontFamily="@font/nunitobold"
-                            android:textSize="20sp"
-                            />
-
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0.6dp"
-                        android:layout_marginTop="30dp"
-                        android:background="@android:color/darker_gray"
-                        android:layout_margin="5dp"
-                        />
-
                     <LinearLayout
+                        android:id="@+id/linCart"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="5dp"
                         >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Recommended"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/nunitobold"
-                            android:textSize="18sp"
-                            />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/cartRecommended"
+                        <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:scrollbarSize="0dp"
-                            tools:listitem="@layout/product_item" />
+                            android:padding="10dp"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Single Items"
+                                android:textColor="@color/black"
+                                android:fontFamily="@font/nunitobold"
+                                />
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="30dp"
+                            android:visibility="gone"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="OOPS!!, no Items in your cart"
+                                android:textColor="@android:color/darker_gray"
+                                android:fontFamily="@font/nunitobold"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:textSize="20sp"
+                                />
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            >
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recyclerCart"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="15dp"
+                                />
+                            <TextView
+                                android:id="@+id/txtNoItems"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="No Items"
+                                android:textColor="@color/black"
+                                android:layout_centerHorizontal="true"
+                                android:layout_margin="20dp"
+                                android:fontFamily="@font/nunitobold"
+                                android:textSize="20sp"
+                                />
+
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.6dp"
+                            android:layout_marginTop="30dp"
+                            android:background="@android:color/darker_gray"
+                            android:layout_margin="5dp"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:padding="5dp"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Recommended"
+                                android:textColor="@color/black"
+                                android:fontFamily="@font/nunitobold"
+
+                                />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/cartRecommended"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:scrollbarSize="0dp"
+                                tools:listitem="@layout/product_item" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
-                </LinearLayout>
+                    <ProgressBar
+                        android:id="@+id/progressCart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="250dp"
+                        />
+
+                </RelativeLayout>
             </LinearLayout>
 
         </ScrollView>

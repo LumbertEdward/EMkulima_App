@@ -11,7 +11,7 @@ class Orders(
     var orderId: String? = null,
     @SerializedName("userId")
     @Expose
-    var userId: Int? = null,
+    var userId: String? = null,
     @SerializedName("order_price")
     @Expose
     var orderPrice: Int? = null,
@@ -21,14 +21,18 @@ class Orders(
     @SerializedName("delivery_date")
     @Expose
     var deliveryDate: String? = null,
+    @SerializedName("delivery_time")
+    @Expose
+    var deliveryTime: String? = null,
     @SerializedName("status")
     @Expose
     var status: String? = null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
+        parcel.readString(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
@@ -37,10 +41,11 @@ class Orders(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(orderId)
-        parcel.writeValue(userId)
+        parcel.writeString(userId)
         parcel.writeValue(orderPrice)
         parcel.writeString(orderDate)
         parcel.writeString(deliveryDate)
+        parcel.writeString(deliveryTime)
         parcel.writeString(status)
     }
 
@@ -57,5 +62,6 @@ class Orders(
             return arrayOfNulls(size)
         }
     }
+
 
 }

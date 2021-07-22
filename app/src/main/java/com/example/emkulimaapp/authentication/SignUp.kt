@@ -34,6 +34,8 @@ import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SignUp : AppCompatActivity() {
     @BindView(R.id.backLogin)
@@ -108,12 +110,13 @@ class SignUp : AppCompatActivity() {
             val ph = this.phone.text.toString().trim()
             val pass = this.password.text.toString().trim()
             val conf = this.confirm.text.toString().trim()
+            var uuId: UUID = UUID.randomUUID()
 
             if (pass == conf){
                 if (!checkView(first, this.firstName) && !checkView(last, this.lastName) && !checkView(em, this.email) && !checkView(gen, this.gender) && !checkView(loc, this.location) && !checkView(ph, this.phone) && !checkView(pass, this.password)){
 
                     registerInterface = RegisterRetrofit.getRetrofit().create(RegsiterInterface::class.java)
-                    val call: Call<AllCustomer> = registerInterface.registerUser(first, last, em, gen, ph, loc, pass)
+                    val call: Call<AllCustomer> = registerInterface.registerUser(uuId.toString(), first, last, em, gen, ph, loc, pass)
                     call.enqueue(object : Callback<AllCustomer>{
                         override fun onResponse(
                             call: Call<AllCustomer>,
@@ -201,8 +204,9 @@ class SignUp : AppCompatActivity() {
     }
 
     private fun regUser(email: String, firstName: String, lastName: String, middleName: String, photo: String) {
+        var uuId: UUID = UUID.randomUUID()
         googleRegisterInterface = GoogleRegisterRetrofit.getRetrofit().create(GoogleRegisterInterface::class.java)
-        val call: Call<AllCustomer> = googleRegisterInterface.sendUser(firstName, lastName, email, photo)
+        val call: Call<AllCustomer> = googleRegisterInterface.sendUser(uuId.toString(), firstName, lastName, email, photo)
         call.enqueue(object : Callback<AllCustomer>{
             override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
                 if (response.isSuccessful){
