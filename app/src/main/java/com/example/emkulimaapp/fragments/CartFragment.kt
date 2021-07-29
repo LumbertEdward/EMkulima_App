@@ -110,7 +110,7 @@ class CartFragment : Fragment() {
         val userId = sharedPreferences.getString("USERID", "1").toString()
 
         if (userId == ""){
-            Toast.makeText(activity, "No Data", Toast.LENGTH_LONG).show()
+
         }
         else{
             viewCartItemsInterface = ViewCartItemsRetrofit.getRetrofit().create(ViewCartItemsInterface::class.java)
@@ -135,15 +135,23 @@ class CartFragment : Fragment() {
     }
 
     private fun getData(data: ArrayList<Cart>) {
-        for (j in data.indices){
-            for (l in lstAll.indices){
-                if (lstAll[l].productId == data[j].productId){
-                    lstFiltered.add(lstAll[l])
+        if (data.size > 0){
+            for (j in lstAll.indices){
+                for (l in data.indices){
+                    if (lstAll[j].productId == data[l].productId){
+                        lstFiltered.add(lstAll[l])
+                    }
                 }
             }
         }
+        else{
+
+        }
+
 
         if (lstFiltered.size > 0){
+            no.visibility = View.GONE
+            cart.visibility = View.VISIBLE
             cartAdapter.getData(lstFiltered, data)
             this.cart.adapter = cartAdapter
             this.cart.layoutManager = linearLayoutManager
@@ -159,6 +167,10 @@ class CartFragment : Fragment() {
 
             }
             price.text = getString(R.string.MONEY) + y.toString()
+        }
+        else{
+            no.visibility = View.VISIBLE
+            cart.visibility = View.GONE
         }
     }
 
@@ -177,7 +189,7 @@ class CartFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })

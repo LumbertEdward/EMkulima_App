@@ -14,4 +14,6 @@ interface GeneralInterface {
     fun addToFavourites(product_id: Int, view: ImageView)
     fun removeFromFavourites(product_id: Int)
     fun logOut()
+    fun selectedOrder(orderId: String)
+    fun addToCart(product: Product)
 }

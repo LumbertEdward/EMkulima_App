@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -87,11 +88,20 @@ class ProfileFragment : Fragment() {
             override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
                 if (response.isSuccessful){
                     Toast.makeText(activity, "Updated", Toast.LENGTH_LONG).show()
+                    val newSharedPreferences: SharedPreferences = activity?.getSharedPreferences("USERDETAILS",
+                        AppCompatActivity.MODE_PRIVATE
+                    )!!
+                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                    editor.putString("FIRSTNAME", fs)
+                    editor.putString("LASTNAME", ls)
+                    editor.putString("LOCATION", lc)
+                    editor.putString("PHONENUMBER", pn)
+                    editor.apply()
                 }
             }
 
             override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
-                Toast.makeText(activity, "Check Internet Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Internet Connection", Toast.LENGTH_LONG).show()
             }
 
         })

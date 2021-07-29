@@ -102,14 +102,20 @@ class Login : AppCompatActivity() {
         call.enqueue(object : Callback<AllCustomer>{
             override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
                 if (response.isSuccessful){
-                    progressBar.visibility = View.GONE
-                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                    editor.putBoolean("LOGGEDIN", true)
-                    editor.apply()
-                    saveUserData(response.body()!!.data)
-                    startActivity(Intent(this@Login, MainActivity::class.java))
-                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                    finish()
+                    if (response.body()!!.data.size > 0){
+                        progressBar.visibility = View.GONE
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putBoolean("LOGGEDIN", true)
+                        editor.apply()
+                        saveUserData(response.body()!!.data)
+                        startActivity(Intent(this@Login, MainActivity::class.java))
+                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                        finish()
+                    }
+                    else{
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this@Login, "Wrong username or password", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
@@ -126,6 +132,7 @@ class Login : AppCompatActivity() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString("EMAIL", data[0].email)
         editor.putString("FIRSTNAME", data[0].firstName)
+        editor.putString("LASTNAME", data[0].lastName)
         editor.putString("USERID", data[0].userId.toString())
         editor.putString("LOCATION", data[0].location)
         editor.putString("PHONENUMBER", data[0].phoneNumber)
@@ -170,18 +177,24 @@ class Login : AppCompatActivity() {
         call.enqueue(object : Callback<AllCustomer>{
             override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
                 if (response.isSuccessful){
-                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                    editor.putBoolean("LOGGEDIN", true)
-                    editor.apply()
-                    setUser(response.body()!!.data)
-                    startActivity(Intent(this@Login, MainActivity::class.java))
-                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                    finish()
+                    if (response.body()!!.data.size > 0){
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putBoolean("LOGGEDIN", true)
+                        editor.apply()
+                        setUser(response.body()!!.data)
+                        startActivity(Intent(this@Login, MainActivity::class.java))
+                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                        finish()
+                    }
+                    else{
+                        Toast.makeText(this@Login, "Email does not exist", Toast.LENGTH_LONG).show()
+                    }
+
                 }
             }
 
             override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
-                Toast.makeText(this@Login, "User does not exist", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@Login, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -192,9 +205,13 @@ class Login : AppCompatActivity() {
         if (data.size > 0){
             val sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", MODE_PRIVATE)
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
-            editor.putString("EMAIL", data[0].email.toString())
-            editor.putString("FIRSTNAME", data[0].firstName.toString())
+            editor.putString("EMAIL", data[0].email)
+            editor.putString("FIRSTNAME", data[0].firstName)
+            editor.putString("LASTNAME", data[0].lastName)
             editor.putString("USERID", data[0].userId.toString())
+            editor.putString("LOCATION", data[0].location)
+            editor.putString("PHONENUMBER", data[0].phoneNumber)
+            editor.apply()
             editor.apply()
         }
     }

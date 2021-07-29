@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -18,6 +19,8 @@ import com.example.emkulimaapp.R
 class SplashScreen : AppCompatActivity() {
     @BindView(R.id.txtName)
     lateinit var textView: TextView
+    @BindView(R.id.imgLogo)
+    lateinit var logo: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +32,7 @@ class SplashScreen : AppCompatActivity() {
         }
 
         val animation: Animation = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left)
-        textView.startAnimation(animation)
+        logo.startAnimation(animation)
 
         Handler(Looper.getMainLooper()).postDelayed({
             val intent: Intent = Intent(this, Login::class.java)

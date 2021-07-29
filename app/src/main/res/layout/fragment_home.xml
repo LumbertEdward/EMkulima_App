@@ -58,7 +58,7 @@
                         android:layout_marginBottom="20dp"
                         android:layout_marginLeft="18dp"
                         android:layout_marginRight="3dp"
-                        android:textSize="7sp"
+                        android:textSize="8sp"
                         android:gravity="center_horizontal" />
 
                 </RelativeLayout>
@@ -219,7 +219,7 @@
                                                 <ImageView
                                                     android:layout_width="40dp"
                                                     android:layout_height="40dp"
-                                                    android:src="@drawable/veg"
+                                                    android:src="@drawable/dairy"
                                                     android:scaleType="fitXY"
                                                     />
 
@@ -268,7 +268,7 @@
                                                 <ImageView
                                                     android:layout_width="40dp"
                                                     android:layout_height="40dp"
-                                                    android:src="@drawable/veg"
+                                                    android:src="@drawable/meats"
                                                     android:scaleType="fitXY"
                                                     />
 
@@ -292,7 +292,7 @@
                                     android:id="@+id/cardPoultry"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    app:cardBackgroundColor="@color/green"
+                                    app:cardBackgroundColor="@android:color/black"
                                     android:layout_marginLeft="8dp"
                                     app:cardCornerRadius="5dp"
                                     >
@@ -317,7 +317,7 @@
                                                 <ImageView
                                                     android:layout_width="40dp"
                                                     android:layout_height="40dp"
-                                                    android:src="@drawable/veg"
+                                                    android:src="@drawable/poultry"
                                                     android:scaleType="fitXY"
                                                     />
 
@@ -325,7 +325,7 @@
                                             <TextView
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
-                                                android:text="Meat"
+                                                android:text="Poultry"
                                                 android:textColor="@color/white"
                                                 android:fontFamily="@font/nunitobold"
                                                 android:layout_gravity="center_vertical"
@@ -570,6 +570,7 @@
                                         android:text="View All"
                                         android:textColor="@color/green"
                                         android:fontFamily="@font/nunitobold"
+                                        android:visibility="gone"
                                         />
                                     <ImageView
                                         android:layout_width="wrap_content"

@@ -24,17 +24,22 @@ open class OrdersAdapter(val context: Context): RecyclerView.Adapter<RecyclerVie
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val myViewHolder: MyViewHolder = holder as MyViewHolder
-        myViewHolder.id.text = lst[position].orderId
+        myViewHolder.id.text = "#" + lst[position].orderId
         myViewHolder.date.text = lst[position].orderDate
         myViewHolder.status.text = lst[position].status
         myViewHolder.card.setOnClickListener {
-
+            generalInterface.selectedOrder(lst[position].orderId!!)
         }
         setScaleAnimation(myViewHolder.itemView)
     }
 
     override fun getItemCount(): Int {
         return lst.size
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        generalInterface = context as GeneralInterface
     }
 
     protected class MyViewHolder(view: View): RecyclerView.ViewHolder(view){

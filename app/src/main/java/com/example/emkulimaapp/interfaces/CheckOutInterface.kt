@@ -12,7 +12,6 @@ interface CheckOutInterface {
     fun checkOut(
         @Field("product_id") productId: Int,
         @Field("farmer_id") farmerId: Int,
-        @Field("order_Id") orderId: String,
-        @Field("status") status: String
+        @Field("order_Id") orderId: String
     ): Call<AllOrderItems>
 }

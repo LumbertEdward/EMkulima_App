@@ -19,6 +19,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.emkulimaapp.R
 import com.example.emkulimaapp.RetrofitClasses.Home.ChoicesRetrofit
 import com.example.emkulimaapp.RetrofitClasses.Home.FruitsRetrofit
@@ -27,6 +32,7 @@ import com.example.emkulimaapp.RetrofitClasses.Home.VegetablesRetrofit
 import com.example.emkulimaapp.adapters.CategoryAdapter
 import com.example.emkulimaapp.adapters.ProductAdapter
 import com.example.emkulimaapp.adapters.TakeAdapter
+import com.example.emkulimaapp.constants.constants
 import com.example.emkulimaapp.interfaces.GeneralInterface
 import com.example.emkulimaapp.interfaces.Home.ChoiceInterface
 import com.example.emkulimaapp.interfaces.Home.FruitInterface
@@ -35,6 +41,11 @@ import com.example.emkulimaapp.interfaces.Home.VegetableInterface
 import com.example.emkulimaapp.models.AllProducts
 import com.example.emkulimaapp.models.Product
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -87,6 +98,7 @@ class HomeFragment : Fragment() {
     private lateinit var recommendedLayoutManager: GridLayoutManager
     private lateinit var takeAdapter: TakeAdapter
     private lateinit var categoryAdapter: CategoryAdapter
+    private lateinit var vegCategoryAdapter: CategoryAdapter
     private lateinit var generalInterface: GeneralInterface
     private lateinit var productAdapter: ProductAdapter
     //
@@ -94,6 +106,9 @@ class HomeFragment : Fragment() {
     private lateinit var fruitInterface: FruitInterface
     private lateinit var vegetableInterface: VegetableInterface
     private lateinit var choiceInterface: ChoiceInterface
+
+    private var requestQueue: RequestQueue? = null
+    private var jsonObjectRequest: JsonObjectRequest? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,8 +150,44 @@ class HomeFragment : Fragment() {
     }
 
     private fun setNotifications() {
-        var sharedPreferences: SharedPreferences = activity?.getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
-        var total: Int = sharedPreferences.getInt("TOTAL", 0)
+
+        requestQueue = Volley.newRequestQueue(activity)
+
+        var sharedPreferences: SharedPreferences = activity?.getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        jsonObjectRequest = JsonObjectRequest(Request.Method.GET, constants.BASE_URL + "customer/notifications/${userId}", null,
+            {
+                try {
+                    val jsonArray: JSONArray = it.getJSONArray("data")
+                    if (jsonArray.length() > 0){
+                        var notificationSharedPreferences: SharedPreferences = activity?.getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
+                        var editor: SharedPreferences.Editor = notificationSharedPreferences.edit()
+                        editor.putInt("PRESENT", jsonArray.length())
+                        editor.putInt("PREVIOUS", 0)
+                        editor.apply()
+
+                    }
+                    else{
+                        //Toast.makeText(activity, "No data", Toast.LENGTH_LONG).show()
+                    }
+
+                }
+                catch (e: JSONException){
+
+                }
+            },
+            {
+                //Toast.makeText(activity, "Error", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        requestQueue!!.add(jsonObjectRequest)
+
+
+        var notificationSharedPreferences: SharedPreferences = activity?.getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
+        var total: Int = notificationSharedPreferences.getInt("PRESENT", 0)
+
         if (total > 0){
             notNumb.visibility = View.VISIBLE
             notNumb.text = total.toString()
@@ -187,7 +238,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -233,7 +284,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -250,7 +301,7 @@ class HomeFragment : Fragment() {
     private fun setVegetablesCategory() {
         recyclerVeg.visibility = View.GONE
         val activity = activity as Context
-        categoryAdapter = CategoryAdapter(activity)
+        vegCategoryAdapter = CategoryAdapter(activity)
         categoryLinearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
 
         vegetableInterface = VegetablesRetrofit.getRetrofit().create(VegetableInterface::class.java)
@@ -265,15 +316,14 @@ class HomeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
-
         })
     }
 
     private fun getVegetables(all: ArrayList<Product>) {
-        categoryAdapter.getCategory(all)
-        this.recyclerVeg.adapter = categoryAdapter
+        vegCategoryAdapter.getCategory(all)
+        this.recyclerVeg.adapter = vegCategoryAdapter
         this.recyclerVeg.layoutManager = categoryLinearLayoutManager
     }
 
@@ -295,7 +345,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllProducts>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })

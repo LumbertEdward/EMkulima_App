@@ -1,5 +1,6 @@
 package com.example.emkulimaapp.fragments
 
+import android.app.VoiceInteractor
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -15,12 +16,21 @@ import androidx.navigation.fragment.findNavController
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnItemSelected
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.emkulimaapp.R
 import com.example.emkulimaapp.RetrofitClasses.CheckOutRetrofit
 import com.example.emkulimaapp.RetrofitClasses.OrderRetrofit
 import com.example.emkulimaapp.RetrofitClasses.SendNotificationRetrofit
+import com.example.emkulimaapp.constants.constants
 import com.example.emkulimaapp.interfaces.*
 import com.example.emkulimaapp.models.*
+import com.google.gson.JsonObject
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -61,10 +71,13 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var checkOutInterface: CheckOutInterface
     private lateinit var generalInterface: GeneralInterface
     private lateinit var sendNotificationInterface: SendNotificationInterface
+    private var jsonArrayRequest: JsonObjectRequest? = null
+    private var requestQueue: RequestQueue? = null
 
     val options = arrayOf("8:30 Am", "10:00 AM", "12:00PM", "4:30PM")
 
     private var time: String = "8:30 Am"
+    private var orderNum: String = "0"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +95,8 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
         linearCheckOut.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
+
+        requestQueue = Volley.newRequestQueue(activity)
 
         var activity = activity as Context
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter(activity, android.R.layout.simple_spinner_item, options)
@@ -102,7 +117,6 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun makeOrder() {
-        var ordId = orderId.text.toString()
         var order_price = price.text.toString().toInt()
         var delivery_date = date.text.toString()
         val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("USERDETAILS",
@@ -110,7 +124,7 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
         )!!
         var uId = sharedPreferences.getString("USERID", "1")!!
         orderInterface = OrderRetrofit.getRetrofit().create(OrderInterface::class.java)
-        val call: Call<AllOrders> = orderInterface.orderProduct(ordId, order_price, delivery_date, time, uId)
+        val call: Call<AllOrders> = orderInterface.orderProduct(orderNum, order_price, delivery_date, time, uId)
         call.enqueue(object : Callback<AllOrders>{
             override fun onResponse(call: Call<AllOrders>, response: Response<AllOrders>) {
                 if (response.isSuccessful){
@@ -126,25 +140,28 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun sendOrderProducts() {
-        var lst: ArrayList<Cart> = arguments?.getParcelableArrayList<Cart>("CART")!!
+        var lst: ArrayList<Product> = arguments?.getParcelableArrayList<Product>("CART")!!
         for (i in lst.indices){
-            checkOutInterface = CheckOutRetrofit.getRetrofit().create(CheckOutInterface::class.java)
-            var call: Call<AllOrderItems> = checkOutInterface.checkOut(lst[i].productId!!, lst[i].farmerId!!, orderId.text.toString(), "Pending")
-            call.enqueue(object : Callback<AllOrderItems>{
-                override fun onResponse(
-                    call: Call<AllOrderItems>,
-                    response: Response<AllOrderItems>
-                ) {
-                    if (response.isSuccessful){
+            var jsonObject: JSONObject = JSONObject()
+            try {
+                jsonObject.put("product_id", lst[i].productId)
+                jsonObject.put("farmer_id", lst[i].farmerId!!)
+                jsonObject.put("order_id", orderNum)
+            }
+            catch (e: JSONException){
 
-                    }
+            }
+
+            jsonArrayRequest = JsonObjectRequest(Request.Method.POST, constants.BASE_URL + "customer/products/checkout", jsonObject,
+                {
+                    //Toast.makeText(activity, "Done", Toast.LENGTH_LONG).show()
+                },
+                {
+                    //Toast.makeText(activity, "Error", Toast.LENGTH_LONG).show()
                 }
+            )
 
-                override fun onFailure(call: Call<AllOrderItems>, t: Throwable) {
-                    Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
-                }
-
-            })
+            requestQueue!!.add(jsonArrayRequest)
         }
 
     }
@@ -200,6 +217,7 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             var random = Random.nextInt(10000, 100000)
             orderId.text = "#" + random.toString()
+            orderNum = random.toString()
         }
 
     }
@@ -213,6 +231,9 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun sendNotification() {
+        var notificationSharedPreferences: SharedPreferences = activity?.getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
+        var pres: Int = notificationSharedPreferences.getInt("PRESENT", 0)
+
         val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val date: Date = Date()
         val myDate = simpleDateFormat.format(date)
@@ -229,12 +250,17 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 response: Response<AllNotifications>
             ) {
                 if (response.isSuccessful){
-                    Toast.makeText(activity, "Notification Added", Toast.LENGTH_LONG).show()
+                    pres += 1
+                    var notificationSharedPreferences: SharedPreferences = activity?.getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
+                    var editor: SharedPreferences.Editor = notificationSharedPreferences.edit()
+                    editor.putInt("PRESENT", pres)
+                    editor.apply()
+                    //Toast.makeText(activity, prs.toString(), Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<AllNotifications>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })

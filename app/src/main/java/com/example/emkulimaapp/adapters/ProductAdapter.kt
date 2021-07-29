@@ -49,6 +49,10 @@ ProductAdapter(val context: Context): RecyclerView.Adapter<RecyclerView.ViewHold
         myViewHolder.fav.setOnClickListener {
             generalInterface.addToFavourites(lst[position].productId!!, myViewHolder.imgFav)
         }
+
+        myViewHolder.cart.setOnClickListener {
+            generalInterface.addToCart(lst[position])
+        }
     }
 
     override fun getItemCount(): Int {

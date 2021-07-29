@@ -75,7 +75,7 @@ class PendingOrdersFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AllOrders>, t: Throwable) {
-                Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })

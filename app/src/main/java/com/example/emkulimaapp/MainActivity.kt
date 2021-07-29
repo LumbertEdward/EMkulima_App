@@ -22,14 +22,22 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.emkulimaapp.RetrofitClasses.*
 import com.example.emkulimaapp.authentication.Login
+import com.example.emkulimaapp.constants.constants
 import com.example.emkulimaapp.fragments.*
 import com.example.emkulimaapp.interfaces.DeleteFavouriteInterface
 import com.example.emkulimaapp.interfaces.Favourites.CheckingProductInterface
@@ -48,6 +56,7 @@ import com.google.android.material.navigation.NavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Method
 
 class MainActivity : AppCompatActivity(), GeneralInterface {
     @BindView(R.id.bottom)
@@ -60,6 +69,7 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
 
     private lateinit var navController: NavController
     private var totItem: Int = 1
+    val navOptions: NavOptions.Builder = NavOptions.Builder()
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,16 +78,14 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         ButterKnife.bind(this)
         navController = findNavController(R.id.navHost)
 
-        if (navController.currentDestination?.label.toString().contains("fragment_product_details")) {
-            Toast.makeText(this, "Cart", Toast.LENGTH_LONG).show()
-        }
-
         sharedPreferences = this.getSharedPreferences("USER", MODE_PRIVATE)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             window.statusBarColor = resources.getColor(R.color.white, Resources.getSystem().newTheme())
             window.navigationBarColor = resources.getColor(R.color.green, Resources.getSystem().newTheme())
         }
+
+        navOptions.setEnterAnim(android.R.anim.slide_in_left).setExitAnim(android.R.anim.slide_out_right).setPopEnterAnim(android.R.anim.slide_in_left).setPopExitAnim(android.R.anim.slide_out_right)
 
         initFragment()
         setBottomView()
@@ -92,24 +100,23 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         this.bot.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.home -> {
-                    navController.navigate(R.id.homeFragment)
+                    navController.navigate(R.id.homeFragment, null, navOptions.build())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.cart -> {
-                    navController.navigate(R.id.cartFragment)
+                    navController.navigate(R.id.cartFragment, null, navOptions.build())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.favourites -> {
-                    navController.navigate(R.id.favouritesFragment)
+                    navController.navigate(R.id.favouritesFragment, null, navOptions.build())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.profile -> {
-                    navController.navigate(R.id.profileFragment)
-                    hideBottom()
+                    navController.navigate(R.id.profileFragment, null, navOptions.build())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.orders -> {
-                    navController.navigate(R.id.ordersFragment)
+                    navController.navigate(R.id.ordersFragment, null, navOptions.build())
                     return@setOnNavigationItemSelectedListener true
                 }
                 else -> {
@@ -135,8 +142,7 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
     override fun passDetails(product: Product) {
         var bundle: Bundle = Bundle()
         bundle.putParcelable("PRODUCT", product)
-
-        navController.navigate(R.id.action_productsFragment_to_productDetailsFragment, bundle)
+        navController.navigate(R.id.productDetailsFragment, bundle, navOptions.build(), null)
     }
 
     override fun getTypeSelected(type: String) {
@@ -238,9 +244,40 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
             val sharedPreferencesUserDetails: SharedPreferences = getSharedPreferences("USERDETAILS", MODE_PRIVATE)
             val editorUser: SharedPreferences.Editor = sharedPreferencesUserDetails.edit()
             editorUser.clear()
+            editorUser.apply()
+
+            val notificationSharedPreferences: SharedPreferences = getSharedPreferences("NOTIFICATIONS", Context.MODE_PRIVATE)!!
+            val editorNot: SharedPreferences.Editor = notificationSharedPreferences.edit()
+            editorNot.clear()
+            editorNot.apply()
+
             startActivity(Intent(this, Login::class.java))
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+            finish()
         }
+    }
+
+    override fun selectedOrder(orderId: String) {
+        val bundle: Bundle = Bundle()
+        bundle.putString("ORDERID", orderId)
+        navController.navigate(R.id.viewSelectedOrdersFragment, bundle)
+    }
+
+    override fun addToCart(product: Product) {
+        var sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
+        val userId = sharedPreferences.getString("USERID", "1").toString()
+
+        var cartRequest: RequestQueue = Volley.newRequestQueue(this)
+
+        var jsonObjectRequest: JsonObjectRequest = JsonObjectRequest(Request.Method.GET, constants.BASE_URL + "customer/products/${product.productId}/${product.farmerId}/${userId}/${1}/shoppingcart/add/", null,
+            {
+
+            },
+            {
+
+            })
+
+        cartRequest.add(jsonObjectRequest)
     }
 
 

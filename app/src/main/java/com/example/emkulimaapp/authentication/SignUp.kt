@@ -123,16 +123,23 @@ class SignUp : AppCompatActivity() {
                             response: Response<AllCustomer>
                         ) {
                             if (response.isSuccessful){
-                                progressSign.visibility = View.GONE
-                                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                                editor.putBoolean("LOGGEDIN", true)
-                                editor.apply()
-                                setUser(response.body()!!.data[0])
+                                if (response.body()!!.data.size > 0){
+                                    progressSign.visibility = View.GONE
+                                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                                    editor.putBoolean("LOGGEDIN", true)
+                                    editor.apply()
+                                    setUser(response.body()!!.data[0])
+                                }
+                                else{
+                                    progressSign.visibility = View.GONE
+                                    Toast.makeText(this@SignUp, "Not Successful, Check Network Connection", Toast.LENGTH_LONG).show()
+                                }
+
                             }
                         }
 
                         override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
-                            Toast.makeText(this@SignUp, t.message.toString(), Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@SignUp, "Check Network Connection", Toast.LENGTH_LONG).show()
                             progressSign.visibility = View.GONE
                         }
 
@@ -159,6 +166,7 @@ class SignUp : AppCompatActivity() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString("EMAIL", customer.email)
         editor.putString("FIRSTNAME", customer.firstName)
+        editor.putString("LASTNAME", customer.lastName)
         editor.putString("USERID", customer.userId.toString())
         editor.putString("LOCATION", customer.location)
         editor.putString("PHONENUMBER", customer.phoneNumber)
@@ -210,18 +218,24 @@ class SignUp : AppCompatActivity() {
         call.enqueue(object : Callback<AllCustomer>{
             override fun onResponse(call: Call<AllCustomer>, response: Response<AllCustomer>) {
                 if (response.isSuccessful){
-                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                    editor.putBoolean("LOGGEDIN", true)
-                    editor.apply()
-                    setUserData(response.body()!!.data)
-                    startActivity(Intent(this@SignUp, MainActivity::class.java))
-                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                    finish()
+                    if (response.body()!!.data.size > 0){
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putBoolean("LOGGEDIN", true)
+                        editor.apply()
+                        setUserData(response.body()!!.data)
+                        startActivity(Intent(this@SignUp, MainActivity::class.java))
+                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                        finish()
+                    }
+                    else{
+                        Toast.makeText(this@SignUp, "Not Successful, Check Network Connection", Toast.LENGTH_LONG).show()
+                    }
+
                 }
             }
 
             override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
-
+                Toast.makeText(this@SignUp, "Check Network Connection", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -233,6 +247,7 @@ class SignUp : AppCompatActivity() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString("EMAIL", data[0].email)
         editor.putString("FIRSTNAME", data[0].firstName)
+        editor.putString("LASTNAME", data[0].lastName)
         editor.putString("USERID", data[0].userId.toString())
         editor.putString("LOCATION", data[0].location)
         editor.putString("PHONENUMBER", data[0].phoneNumber)
