@@ -1,9 +1,15 @@
 package com.example.emkulimaapp.fragments
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.VoiceInteractor
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.renderscript.RenderScript
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +18,8 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.fragment.findNavController
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -21,6 +29,7 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.emkulimaapp.MainActivity
 import com.example.emkulimaapp.R
 import com.example.emkulimaapp.RetrofitClasses.CheckOutRetrofit
 import com.example.emkulimaapp.RetrofitClasses.OrderRetrofit
@@ -109,7 +118,22 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
             checkOut()
         }
         getList()
+        createChannel()
         return view
+    }
+
+    private fun createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val name: String = "UserNotifications"
+            var description = "Users Notifications"
+            var importance = NotificationManager.IMPORTANCE_DEFAULT
+            var channel = NotificationChannel(constants.CHANNEL_ID, name, importance).apply {
+                description = description
+            }
+
+            var notificationManager: NotificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun checkOut() {
@@ -255,6 +279,7 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     var editor: SharedPreferences.Editor = notificationSharedPreferences.edit()
                     editor.putInt("PRESENT", pres)
                     editor.apply()
+                    sendNotificationMessage(orderId)
                     //Toast.makeText(activity, prs.toString(), Toast.LENGTH_LONG).show()
                 }
             }
@@ -264,6 +289,33 @@ class CheckOutFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 
         })
+    }
+
+    private fun sendNotificationMessage(orderId: TextView) {
+        var intent: Intent = Intent(activity, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        var pendingIntent: PendingIntent = PendingIntent.getActivity(activity, 0, intent, 0)
+
+        var builder = activity?.let { NotificationCompat.Builder(it, constants.CHANNEL_ID) }
+        builder!!.setSmallIcon(R.drawable.newlogo)
+        builder!!.setContentTitle("Order ${orderId.text.toString()}")
+        builder!!.setContentText("Your order ${orderId.text.toString()} is being processed, check your notifications for further information")
+        builder!!.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        builder!!.setContentIntent(pendingIntent)
+        builder.setAutoCancel(true)
+
+
+        var notManager: NotificationManagerCompat? = activity?.let {
+            NotificationManagerCompat.from(
+                it
+            )
+        }
+        notManager!!.notify(1, builder.build())
+
+
+
     }
 
     override fun onAttach(context: Context) {

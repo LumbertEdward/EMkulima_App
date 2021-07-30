@@ -2,6 +2,7 @@ package com.example.emkulimaapp.interfaces
 
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.emkulimaapp.farmer.models.farmer
 import com.example.emkulimaapp.models.Cart
 import com.example.emkulimaapp.models.Product
 
@@ -16,4 +17,6 @@ interface GeneralInterface {
     fun logOut()
     fun selectedOrder(orderId: String)
     fun addToCart(product: Product)
+    fun sendFarmer(farm: farmer)
+    fun sendLocation(location: String)
 }

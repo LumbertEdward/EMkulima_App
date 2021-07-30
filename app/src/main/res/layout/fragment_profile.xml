@@ -71,10 +71,10 @@
                                 <ImageView
                                     android:layout_width="80dp"
                                     android:layout_height="80dp"
-                                    android:src="@drawable/prof"
+                                    android:src="@drawable/ic_baseline_person_24"
                                     android:scaleType="fitXY"
-                                    android:background="@android:color/darker_gray"
-                                    />
+                                    android:background="@android:color/white"
+                                    app:tint="@android:color/darker_gray" />
                             </RelativeLayout>
                         </androidx.cardview.widget.CardView>
                     </RelativeLayout>

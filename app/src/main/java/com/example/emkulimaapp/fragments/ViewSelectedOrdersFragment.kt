@@ -119,7 +119,6 @@ class ViewSelectedOrdersFragment : Fragment() {
             }
 
             if (items.size > 0){
-                Toast.makeText(activity, "Data is there", Toast.LENGTH_LONG).show()
                 progress.visibility = View.GONE
                 prodsRecycler.visibility = View.VISIBLE
 

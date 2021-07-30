@@ -29,14 +29,17 @@ import com.example.emkulimaapp.RetrofitClasses.FavouritesRetrofit
 import com.example.emkulimaapp.RetrofitClasses.RecommendedDetailsRetrofit
 import com.example.emkulimaapp.adapters.ProductAdapter
 import com.example.emkulimaapp.constants.constants
+import com.example.emkulimaapp.farmer.models.farmer
 import com.example.emkulimaapp.interfaces.CartInterface
 import com.example.emkulimaapp.interfaces.FavouritesInterface
+import com.example.emkulimaapp.interfaces.GeneralInterface
 import com.example.emkulimaapp.interfaces.RecommendedDetailsInterface
 import com.example.emkulimaapp.models.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonObject
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -68,15 +71,26 @@ class ProductDetailsFragment : Fragment() {
     lateinit var quantity: TextView
     @BindView(R.id.scrollDetails)
     lateinit var scroll: ScrollView
+    @BindView(R.id.imgFarmer)
+    lateinit var farmerImg: ImageView
+    @BindView(R.id.txtFarmer)
+    lateinit var farmerName: TextView
+    @BindView(R.id.linearFarmer)
+    lateinit var fDetails: LinearLayout
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var productAdapter: ProductAdapter
     private lateinit var cartInterface: CartInterface
     private lateinit var recommendedDetailsInterface: RecommendedDetailsInterface
     private lateinit var favouritesInterface: FavouritesInterface
+    private lateinit var generalInterface: GeneralInterface
 
     private var requestQueue: RequestQueue? = null
     private var jsonObjectRequest: JsonObjectRequest? = null
+    private var farmerList: ArrayList<farmer> = ArrayList()
+    private var farmPic: String? = ""
+    private var nm: String? = ""
+    private var frm: farmer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,8 +116,70 @@ class ProductDetailsFragment : Fragment() {
             addToFav()
         }
         setDetails()
+        setFarmer()
         setRecommended()
         return view
+    }
+
+    private fun setFarmer() {
+        val product = arguments?.getParcelable<Product>("PRODUCT")
+        var farmId: Int = product!!.farmerId!!
+        var myReq: RequestQueue = Volley.newRequestQueue(activity)
+
+        var jsonObjectRequest: JsonObjectRequest = JsonObjectRequest(Request.Method.GET, constants.BASE_URL + "farmer/allfarmers", null,
+            {
+                try {
+                    var jsonArray: JSONArray = it.getJSONArray("data")
+                    var farmerListAdded: ArrayList<farmer> = ArrayList()
+                    for (i in 0..(jsonArray.length() - 1)){
+                        var jsonObj: JSONObject = jsonArray.getJSONObject(i)
+                        var fmr: farmer = farmer()
+                        fmr.farmerId = jsonObj.getInt("farmer_id")
+                        fmr.firstName = jsonObj.getString("first_name")
+                        fmr.lastName = jsonObj.getString("last_name")
+                        fmr.email = jsonObj.getString("email")
+                        fmr.bio = jsonObj.getString("bio")
+                        fmr.gender = jsonObj.getString("gender")
+                        fmr.idNumber = jsonObj.getInt("id_number")
+                        fmr.phoneNumber = jsonObj.getString("phone_number")
+                        fmr.profilePicture = jsonObj.getString("profile_pic")
+                        fmr.location = jsonObj.getString("location")
+
+                        farmerListAdded.add(fmr)
+                    }
+
+                    farmerList.addAll(farmerListAdded)
+                    for (i in farmerList.indices){
+                        if (farmerList[i].farmerId == farmId){
+                            farmPic = farmerList[i].profilePicture!!
+                            nm = farmerList[i].firstName!!
+                            frm = farmerList[i]
+                        }
+                    }
+
+                    var activity = activity as Context
+
+                    val picasso: Picasso.Builder = Picasso.Builder(activity)
+                    picasso.downloader(OkHttp3Downloader(activity))
+                    picasso.build().load(constants.BASE_URL + farmPic).into(farmerImg)
+
+                    farmerName.text = nm
+
+                    fDetails.setOnClickListener {
+                        generalInterface.sendFarmer(frm!!)
+                    }
+
+                }
+                catch (e: JSONException){
+                    e.printStackTrace()
+                }
+            },
+            {
+
+            })
+
+        myReq.add(jsonObjectRequest)
+
     }
 
     private fun addToFav() {
@@ -276,5 +352,10 @@ class ProductDetailsFragment : Fragment() {
         recyclerView.adapter = productAdapter
         recyclerView.layoutManager = gridLayoutManager
 
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        generalInterface = context as GeneralInterface
     }
 }

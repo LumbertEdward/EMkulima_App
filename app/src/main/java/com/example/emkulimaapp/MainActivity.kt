@@ -38,6 +38,7 @@ import com.android.volley.toolbox.Volley
 import com.example.emkulimaapp.RetrofitClasses.*
 import com.example.emkulimaapp.authentication.Login
 import com.example.emkulimaapp.constants.constants
+import com.example.emkulimaapp.farmer.models.farmer
 import com.example.emkulimaapp.fragments.*
 import com.example.emkulimaapp.interfaces.DeleteFavouriteInterface
 import com.example.emkulimaapp.interfaces.Favourites.CheckingProductInterface
@@ -53,6 +54,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -61,6 +63,8 @@ import java.lang.reflect.Method
 class MainActivity : AppCompatActivity(), GeneralInterface {
     @BindView(R.id.bottom)
     lateinit var bot: BottomNavigationView
+    @BindView(R.id.linearMain)
+    lateinit var linear: LinearLayout
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var productFavouritesInterface: ProductFavouritesInterface
@@ -263,6 +267,7 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
         navController.navigate(R.id.viewSelectedOrdersFragment, bundle)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun addToCart(product: Product) {
         var sharedPreferences: SharedPreferences = getSharedPreferences("USERDETAILS", Context.MODE_PRIVATE)!!
         val userId = sharedPreferences.getString("USERID", "1").toString()
@@ -271,13 +276,33 @@ class MainActivity : AppCompatActivity(), GeneralInterface {
 
         var jsonObjectRequest: JsonObjectRequest = JsonObjectRequest(Request.Method.GET, constants.BASE_URL + "customer/products/${product.productId}/${product.farmerId}/${userId}/${1}/shoppingcart/add/", null,
             {
-
+                var snackbar: Snackbar = Snackbar.make(linear, "Added To Cart", Snackbar.LENGTH_LONG)
+                snackbar.setBackgroundTint(resources.getColor(R.color.green, Resources.getSystem().newTheme()))
+                snackbar.show()
             },
             {
 
             })
 
         cartRequest.add(jsonObjectRequest)
+    }
+
+    override fun sendFarmer(farm: farmer) {
+        var sharedPreferences: SharedPreferences = getSharedPreferences("FARMERID", Context.MODE_PRIVATE)!!
+        var editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putInt("ID", farm.farmerId!!)
+        editor.putString("NAME", farm.firstName)
+        editor.apply()
+
+        navController.navigate(R.id.selectedFarmerProductsFragments)
+    }
+
+    override fun sendLocation(location: String) {
+        var sharedPreferences: SharedPreferences = getSharedPreferences("LOCATION", Context.MODE_PRIVATE)!!
+        var editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("NAME", location)
+        editor.apply()
+        navController.navigate(R.id.selectedLocationFragment)
     }
 
 

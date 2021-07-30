@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -91,6 +92,8 @@ class HomeFragment : Fragment() {
     lateinit var shimmeVeg: ShimmerFrameLayout
     @BindView(R.id.shimmerFruit)
     lateinit var shimmeFruit: ShimmerFrameLayout
+    @BindView(R.id.relHomeSearch)
+    lateinit var search: RelativeLayout
 
     private lateinit var takeLinearLayoutManager: LinearLayoutManager
     private lateinit var categoryLinearLayoutManager: LinearLayoutManager
@@ -139,6 +142,10 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.notificationsFragment)
         }
         notNumb.visibility = View.GONE
+
+        search.setOnClickListener {
+            showDialog()
+        }
         setTypes()
         setSelectedCategory()
         setTakeItems()
@@ -147,6 +154,35 @@ class HomeFragment : Fragment() {
         setRecommended()
         setNotifications()
         return view
+    }
+
+    private fun showDialog() {
+        var activity = activity as Context
+        var alertDial: AlertDialog.Builder = AlertDialog.Builder(activity)
+        var layoutInflater: LayoutInflater = this.layoutInflater
+        var view: View = layoutInflater.inflate(R.layout.search_type_item, null)
+        alertDial.setView(view)
+        var cardLocation: CardView = view.findViewById(R.id.cardLocationSelected)
+        var cardFarmer: CardView = view.findViewById(R.id.cardFarmerSelected)
+        var cardProductsSearch: CardView = view.findViewById(R.id.cardProductSelected)
+
+        var alertDialog: AlertDialog = alertDial.create()
+        alertDialog.show()
+
+        cardLocation.setOnClickListener {
+            findNavController().navigate(R.id.searchByLocationFragment)
+            alertDialog.dismiss()
+        }
+
+        cardFarmer.setOnClickListener {
+            findNavController().navigate(R.id.searchByFarmerFragment)
+            alertDialog.dismiss()
+        }
+
+        cardProductsSearch.setOnClickListener {
+            findNavController().navigate(R.id.searchFragment)
+            alertDialog.dismiss()
+        }
     }
 
     private fun setNotifications() {

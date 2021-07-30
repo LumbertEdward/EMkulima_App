@@ -29,7 +29,46 @@
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/nunitobold"
                     android:layout_marginLeft="12dp"
+                    android:visibility="gone"
                     />
+
+                <RelativeLayout
+                    android:id="@+id/relHomeSearch"
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/search_back"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="5dp"
+                    >
+                    <ImageView
+                        android:id="@+id/searchIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_baseline_search_24"
+                        android:layout_centerVertical="true"
+                        app:tint="@color/green"
+                        android:layout_marginLeft="5dp"
+                        />
+                    <TextView
+                        android:id="@+id/editSearchLocation"
+                        android:layout_width="350dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="Mkulima ChapChap"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:textColor="@color/green"
+                        android:layout_toRightOf="@id/searchIcon"
+                        android:fontFamily="@font/nunitobold"
+                        />
+
+                </RelativeLayout>
+
+
+
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

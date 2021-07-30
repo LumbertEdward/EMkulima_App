@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/green"
+    android:background="@color/white"
     tools:context=".authentication.SplashScreen">
 
     <RelativeLayout
@@ -40,7 +40,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
+            android:textColor="@color/green"
             android:fontFamily="@font/nunitobold"
             />
 

@@ -98,4 +98,24 @@
         android:name="com.example.emkulimaapp.fragments.ViewSelectedOrdersFragment"
         android:label="fragment_view_selected_orders"
         tools:layout="@layout/fragment_view_selected_orders" />
+    <fragment
+        android:id="@+id/searchByFarmerFragment"
+        android:name="com.example.emkulimaapp.farmer.fragments.SearchByFarmerFragment"
+        android:label="fragment_search_by_farmer"
+        tools:layout="@layout/fragment_search_by_farmer" />
+    <fragment
+        android:id="@+id/searchByLocationFragment"
+        android:name="com.example.emkulimaapp.farmer.fragments.SearchByLocationFragment"
+        android:label="fragment_search_by_location"
+        tools:layout="@layout/fragment_search_by_location" />
+    <fragment
+        android:id="@+id/selectedFarmerProductsFragments"
+        android:name="com.example.emkulimaapp.farmer.fragments.SelectedFarmerProductsFragments"
+        android:label="fragment_selected_farmer_products_fragments"
+        tools:layout="@layout/fragment_selected_farmer_products_fragments" />
+    <fragment
+        android:id="@+id/selectedLocationFragment"
+        android:name="com.example.emkulimaapp.farmer.fragments.SelectedLocationFragment"
+        android:label="fragment_selected_location"
+        tools:layout="@layout/fragment_selected_location" />
 </navigation>
