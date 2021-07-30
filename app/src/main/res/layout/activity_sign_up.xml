@@ -318,7 +318,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerHorizontal="true"
                                     android:fontFamily="@font/nunitobold"
-                                    android:text="Register via"
+                                    android:text="coming soon"
                                     android:textColor="@android:color/darker_gray"
                                     android:textSize="17sp" />
                             </RelativeLayout>

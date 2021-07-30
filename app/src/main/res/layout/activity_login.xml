@@ -146,7 +146,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:fontFamily="@font/nunitobold"
-                            android:text="login via"
+                            android:text="coming soon"
                             android:textColor="@android:color/darker_gray"
                             android:textSize="17sp" />
                     </RelativeLayout>
@@ -166,6 +166,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="5dp"
+                            android:focusable="false"
+
                             >
                             <LinearLayout
                                 android:layout_width="wrap_content"

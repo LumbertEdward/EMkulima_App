@@ -90,7 +90,7 @@ class Login : AppCompatActivity() {
         }
 
         this.googleLogin.setOnClickListener {
-            loginUser()
+            //loginUser()
         }
 
         setOptions()
@@ -120,7 +120,7 @@ class Login : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<AllCustomer>, t: Throwable) {
-                Toast.makeText(this@Login, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(this@Login, "Check Network Connection", Toast.LENGTH_LONG).show()
                 Log.i("LOGIN", t.message.toString())
                 progressBar.visibility = View.GONE
             }

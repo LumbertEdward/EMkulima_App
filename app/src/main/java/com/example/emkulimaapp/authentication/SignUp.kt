@@ -75,7 +75,7 @@ class SignUp : AppCompatActivity() {
                 handleSignInResults(task)
             }
             else{
-                Toast.makeText(this, "Error is ", Toast.LENGTH_LONG).show()
+                //Toast.makeText(this, "Error is ", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -146,7 +146,7 @@ class SignUp : AppCompatActivity() {
                     })
                 }
                 else{
-                    Toast.makeText(this@SignUp, "Passwords okay", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@SignUp, "Passwords okay", Toast.LENGTH_LONG).show()
                 }
             }
             else{
@@ -157,7 +157,7 @@ class SignUp : AppCompatActivity() {
         }
 
         this.googleRegister.setOnClickListener{
-            signUser()
+            //signUser()
         }
     }
 
@@ -207,7 +207,7 @@ class SignUp : AppCompatActivity() {
                 regUser(email, firstName, lastName, middleName, photo)
             }
         } catch (e: ApiException){
-            Toast.makeText(this, "Error is " + e.statusCode.toString(), Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, "Error is " + e.statusCode.toString(), Toast.LENGTH_LONG).show()
         }
     }
 
