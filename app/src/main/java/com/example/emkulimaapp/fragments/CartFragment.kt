@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.emkulimaapp.R
@@ -50,6 +51,8 @@ class CartFragment : Fragment() {
     lateinit var progress: ProgressBar
     @BindView(R.id.relSnack)
     lateinit var snack: RelativeLayout
+    @BindView(R.id.swipeCart)
+    lateinit var swipe: SwipeRefreshLayout
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -61,9 +64,11 @@ class CartFragment : Fragment() {
 
     private var lstAll: ArrayList<Product> = ArrayList()
     private var lstFiltered: ArrayList<Product> = ArrayList()
+    private var lstData: ArrayList<Cart> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -82,6 +87,18 @@ class CartFragment : Fragment() {
 
         linCart.visibility = View.GONE
         progress.visibility = View.VISIBLE
+
+        swipe.setOnRefreshListener {
+            swipe.isRefreshing = false
+            if (lstFiltered.size > 0 && lstData.size > 0){
+                cartAdapter.clear()
+                cartAdapter.getData(lstFiltered, lstData)
+            }
+            else{
+                showCart()
+            }
+
+        }
 
         showCart()
         showRecommendation()
@@ -127,7 +144,7 @@ class CartFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<AllCart>, t: Throwable) {
-                    Toast.makeText(activity, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(activity, "Check Network Connection", Toast.LENGTH_LONG).show()
                 }
             })
         }
@@ -135,11 +152,12 @@ class CartFragment : Fragment() {
     }
 
     private fun getData(data: ArrayList<Cart>) {
+        lstData.addAll(data)
         if (data.size > 0){
             for (j in lstAll.indices){
                 for (l in data.indices){
                     if (lstAll[j].productId == data[l].productId){
-                        lstFiltered.add(lstAll[l])
+                        lstFiltered.add(lstAll[j])
                     }
                 }
             }
@@ -206,5 +224,9 @@ class CartFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         generalInterface = context as GeneralInterface
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 }

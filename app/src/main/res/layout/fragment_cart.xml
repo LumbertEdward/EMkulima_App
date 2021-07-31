@@ -8,14 +8,13 @@
     tools:context=".fragments.CartFragment">
 
     <RelativeLayout
-        android:id="@+id/relSnack"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-        <ScrollView
+        <RelativeLayout
+            android:id="@+id/relSnack"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarSize="0dp"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,178 +37,178 @@
                         android:layout_centerHorizontal="true"
                         />
                 </RelativeLayout>
-                <RelativeLayout
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeCart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     >
-                    <LinearLayout
-                        android:id="@+id/linCart"
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
+                        android:layout_height="match_parent"
+                        android:scrollbarSize="0dp"
                         >
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="10dp"
-                            >
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Single Items"
-                                android:textColor="@color/black"
-                                android:fontFamily="@font/nunitobold"
-                                />
-                        </RelativeLayout>
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="30dp"
-                            android:visibility="gone"
-                            >
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="OOPS!!, no Items in your cart"
-                                android:textColor="@android:color/darker_gray"
-                                android:fontFamily="@font/nunitobold"
-                                android:layout_centerHorizontal="true"
-                                android:layout_centerVertical="true"
-                                android:textSize="20sp"
-                                />
-                        </RelativeLayout>
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            >
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/recyclerCart"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="15dp"
-                                />
-                            <TextView
-                                android:id="@+id/txtNoItems"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="No Items"
-                                android:textColor="@color/black"
-                                android:layout_centerHorizontal="true"
-                                android:layout_margin="20dp"
-                                android:fontFamily="@font/nunitobold"
-                                android:textSize="20sp"
-                                />
-
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="0.6dp"
-                            android:layout_marginTop="30dp"
-                            android:background="@android:color/darker_gray"
-                            android:layout_margin="5dp"
-                            />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:padding="5dp"
                             >
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Recommended"
-                                android:textColor="@color/black"
-                                android:fontFamily="@font/nunitobold"
-
-                                />
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/cartRecommended"
+                            <LinearLayout
+                                android:id="@+id/linCart"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:scrollbarSize="0dp"
-                                tools:listitem="@layout/product_item" />
+                                android:orientation="vertical"
+                                >
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    >
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Single Items"
+                                        android:textColor="@color/black"
+                                        android:fontFamily="@font/nunitobold"
+                                        />
+                                </RelativeLayout>
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    >
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/recyclerCart"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="15dp"
+                                        />
+                                    <TextView
+                                        android:id="@+id/txtNoItems"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="No Items (Refresh)"
+                                        android:textColor="@color/black"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_margin="20dp"
+                                        android:fontFamily="@font/nunitobold"
+                                        android:textSize="20sp"
+                                        />
 
-                        </LinearLayout>
+                                </RelativeLayout>
 
-                    </LinearLayout>
 
-                    <ProgressBar
-                        android:id="@+id/progressCart"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="250dp"
-                        />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0.6dp"
+                                    android:layout_marginTop="30dp"
+                                    android:background="@android:color/darker_gray"
+                                    android:layout_margin="5dp"
+                                    />
 
-                </RelativeLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical"
+                                    android:padding="5dp"
+                                    >
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Recommended"
+                                        android:textColor="@color/black"
+                                        android:fontFamily="@font/nunitobold"
+
+                                        />
+
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/cartRecommended"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="5dp"
+                                        android:scrollbarSize="0dp"
+                                        tools:listitem="@layout/product_item" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/progressCart"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="250dp"
+                                />
+
+                        </RelativeLayout>
+
+                    </ScrollView>
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
             </LinearLayout>
 
-        </ScrollView>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:elevation="30dp"
-            android:background="@drawable/details_back"
-            >
-            <androidx.cardview.widget.CardView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/green"
-                app:cardCornerRadius="5dp"
+                android:layout_alignParentBottom="true"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:elevation="30dp"
+                android:background="@drawable/details_back"
                 >
-                <RelativeLayout
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp"
+                    app:cardBackgroundColor="@color/green"
+                    app:cardCornerRadius="5dp"
                     >
-                    <TextView
-                        android:id="@+id/totalPrice"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="$00"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/nunitobold"
-                        android:layout_centerVertical="true"
-                        />
-                    <LinearLayout
-                        android:id="@+id/linearCheckOut"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true">
+                        android:padding="12dp"
+                        >
                         <TextView
+                            android:id="@+id/totalPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Check Out"
+                            android:text="$00"
                             android:textColor="@color/white"
                             android:fontFamily="@font/nunitobold"
-                            android:layout_gravity="center_vertical"
+                            android:layout_centerVertical="true"
                             />
-                        <ImageView
+                        <LinearLayout
+                            android:id="@+id/linearCheckOut"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_baseline_arrow_forward_24"
-                            app:tint="@color/white"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="15dp"
-                            />
+                            android:orientation="horizontal"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Check Out"
+                                android:textColor="@color/white"
+                                android:fontFamily="@font/nunitobold"
+                                android:layout_gravity="center_vertical"
+                                />
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_baseline_arrow_forward_24"
+                                app:tint="@color/white"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginLeft="15dp"
+                                />
 
-                    </LinearLayout>
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
+
 
 </FrameLayout>

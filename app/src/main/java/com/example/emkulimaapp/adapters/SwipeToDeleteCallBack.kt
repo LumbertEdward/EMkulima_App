@@ -113,7 +113,7 @@ class SwipeToDeleteCallBack(val context: Context, val adapter: CartAdapter, val 
         call.enqueue(object : Callback<message>{
             override fun onResponse(call: Call<message>, response: Response<message>) {
                 if (response.isSuccessful){
-                    Toast.makeText(context, "Removed", Toast.LENGTH_LONG).show()
+
                 }
             }
 

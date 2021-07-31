@@ -175,7 +175,6 @@ class SignUp : AppCompatActivity() {
         startActivity(Intent(this@SignUp, MainActivity::class.java))
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         finish()
-
     }
 
     private fun checkView(item: String, view: EditText): Boolean{

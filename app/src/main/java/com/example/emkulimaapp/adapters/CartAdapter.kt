@@ -35,7 +35,7 @@ open class CartAdapter(val context: Context): RecyclerView.Adapter<RecyclerView.
     }
 
     override fun getItemCount(): Int {
-        return product.size
+        return cart.size
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -74,5 +74,11 @@ open class CartAdapter(val context: Context): RecyclerView.Adapter<RecyclerView.
     fun redoItem(pos: Int, item: Cart){
         cart.add(pos, item)
         notifyItemInserted(pos)
+    }
+
+    fun clear(){
+        product.clear()
+        cart.clear()
+        notifyDataSetChanged()
     }
 }

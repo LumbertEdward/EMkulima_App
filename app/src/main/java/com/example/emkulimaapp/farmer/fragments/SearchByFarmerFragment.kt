@@ -112,7 +112,6 @@ class SearchByFarmerFragment : Fragment() {
                         linearLayoutManager = LinearLayoutManager(activity)
                         recyclerView.adapter = farmerAdapter
                         recyclerView.layoutManager = linearLayoutManager
-                        Toast.makeText(activity, farmerListAdded.size.toString(), Toast.LENGTH_LONG).show()
                     }
                     else{
                         Toast.makeText(activity, "No Data", Toast.LENGTH_LONG).show()
